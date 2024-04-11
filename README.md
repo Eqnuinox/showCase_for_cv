@@ -1,4 +1,4 @@
-## OSME application
+## Startup application
 
 ### **Description:**
 
