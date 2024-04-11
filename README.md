@@ -2,7 +2,7 @@
 
 ### **Description:**
 
-OSME application for sale gift-cards.
+Startup.
 
 ## Project local set up
 
@@ -11,7 +11,7 @@ OSME application for sale gift-cards.
 To get the project code you should make `git clone` command from the remote repository on GitLab.
 The console command will look like:
 ```
-git clone git@gitlab.com:Kupreyka/backend-osme.git
+git clone https://gitlab.com/Kupreyka/be-startup.git
 ```
 
 ### 2. Create .env file:
