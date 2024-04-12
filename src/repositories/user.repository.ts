@@ -55,20 +55,68 @@ class UserRepository {
         }
     }
 
-    public async delete(id: number){
-        try{
+    public async delete(id: number) {
+        try {
             this._transaction = await sequelizeConnection.transaction();
             const user = await User.findByPk(id, {transaction: this._transaction});
             if (!user) {
                 throw new ErrorService(404, 'Account is not exist');
             }
-            await user.destroy({ transaction: this._transaction });
+            await user.destroy({transaction: this._transaction});
             await this._transaction.commit();
-        } catch (error){
-            if (this._transaction){
+        } catch (error) {
+            if (this._transaction) {
                 await this._transaction.rollback()
             }
             throw error
+        }
+    }
+
+
+    public async getAllUsers() {
+        try {
+            this._transaction = await sequelizeConnection.transaction();
+            const allUsers = await User.findAll();
+            await this._transaction.commit();
+            return allUsers;
+        } catch (error) {
+            if (this._transaction) {
+                await this._transaction.rollback()
+            }
+            throw error
+        }
+    }
+
+    public async getUserById(id: number) {
+        try {
+            this._transaction = await sequelizeConnection.transaction();
+            let user = await User.findByPk(id, {transaction: this._transaction});
+            if (!user) {
+                throw new ErrorService(404, 'User not found');
+            }
+            await this._transaction.commit();
+            return user;
+        } catch (error) {
+            if (this._transaction) {
+                await this._transaction.rollback()
+            }
+            throw error
+        }
+    }
+
+    public async findOne(data: any) {
+        try {
+            this._transaction = await sequelizeConnection.transaction();
+            let user = await User.findOne({where: {email: data.email}});
+            if (!user) {
+                throw new ErrorService(404, 'User not found');
+            }
+            await this._transaction.commit();
+            return user
+        } catch (error) {
+            if (this._transaction) {
+                await this._transaction.rollback()
+            }
         }
     }
 }
