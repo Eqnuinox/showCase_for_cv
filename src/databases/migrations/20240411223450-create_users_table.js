@@ -15,10 +15,6 @@ module.exports = {
                 type: Sequelize.DataTypes.STRING(9)
             },
 
-            status: {
-                type: Sequelize.DataTypes.STRING(10),
-                allowNull: true
-            },
 
             first_name: {
                 type: Sequelize.DataTypes.STRING(50),
@@ -32,8 +28,17 @@ module.exports = {
 
             email: {
                 type: Sequelize.DataTypes.STRING(100),
-                allowNull: false,
+                allowNull: true,
                 unique: true
+            },
+
+            status_id: {
+                type: Sequelize.DataTypes.INTEGER,
+                allowNull: true,
+                references: {
+                    model: "statuses",
+                    key: 'id'
+                }
             },
 
             phone: {
@@ -45,10 +50,6 @@ module.exports = {
                 type: Sequelize.DataTypes.BOOLEAN,
                 allowNull: true,
                 defaultValue: false
-            },
-
-            last_logged_in: {
-                type: Sequelize.DataTypes.DATE
             },
 
             is_blocked: {

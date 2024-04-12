@@ -1,8 +1,8 @@
-import {getAllUsers} from "../../../controllers/users";
+import {createUser} from "../../../controllers/users";
 
 const express = require("express");
 const accountRouter = express.Router();
 
-accountRouter.get('/users/all', getAllUsers)
+accountRouter.post('/users/create', createUser)
 
 export {accountRouter} ;

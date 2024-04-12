@@ -15,7 +15,6 @@ const api_version = require("routes/" + process.env.API_VERSION);
 
 
 Object.keys(api_version).forEach(function(key, index) {
-    console.log(key)
     app.use("/api/" + process.env.API_VERSION + "/", api_version[key]);
 });
 

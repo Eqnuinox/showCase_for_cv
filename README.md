@@ -1,4 +1,4 @@
-## OSME application
+## Startup application
 
 ### **Description:**
 
@@ -22,15 +22,7 @@ In root of project: go to folder /scripts and run:
 create-env.sh
 ```
 
-### 3. Run Docker containers:
-
-In root of project:
-
-``` 
-docker-compose up --build
-```
-
-### 4. Create database:
+### 3. Create database:
 
 In root of project:
 
@@ -38,10 +30,18 @@ In root of project:
 npx sequelize-cli db:create
 ```
 
-### 5. Run migrations:
+### 4. Run migrations:
 
 In root of project:
 
 ```
 npx sequelize-cli db:migrate
+```
+
+### 4. Run seeds:
+
+In root of project:
+
+```
+npx sequelize-cli db:seed:all
 ```
