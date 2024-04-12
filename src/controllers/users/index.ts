@@ -61,6 +61,16 @@ export const sendVerificationCode = async (req: Request, res: Response) => {
     }
 }
 
+export const resendVerificationCode = async (req: Request, res: Response) => {
+    try {
+        const {email, user_id} = req.body;
+        await new VerificationCodeService().resendVerificationCode(email, user_id);
+        ResponseHelper.sendResponse(res, 'Your code has been sent');
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}
+
 export const checkVerificationCode = async (req: Request, res: Response) => {
     try {
         const data: {user_id: number, verification_code: number} = req.body

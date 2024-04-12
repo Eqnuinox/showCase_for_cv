@@ -30,15 +30,15 @@ class VerificationCodeService {
         }
     }
 
-    public async resendVerificationCode(email: string) {
+    public async resendVerificationCode(email: string, user_id: number) {
         try {
-            let user = await this.userRepository.findOne({email});
+            let user = await this.userRepository.getUserById(user_id);
             if (!user) {
                 throw new ErrorService(404, 'User not found');
             }
             await this.destroyVerificationCode(user.id);
             let code = await this.createVerificationCode(user.id);
-            await new EmailService().sendVerificationCode(user.email, String(code.verification_code))
+            await new EmailService().sendVerificationCode(email, String(code.verification_code));
         } catch (error) {
             throw error
         }

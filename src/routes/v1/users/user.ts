@@ -3,7 +3,7 @@ import {
     createUser,
     deleteUser,
     getAllUsers,
-    getUserById,
+    getUserById, resendVerificationCode,
     sendVerificationCode,
     updateUser, verifyAccount
 } from "../../../controllers/users";
@@ -18,6 +18,7 @@ accountRouter.patch('/users/update', updateUser)
 accountRouter.delete('/users/:id/delete', deleteUser)
 accountRouter.post('/users/send-verification-code', sendVerificationCode);
 accountRouter.post('/users/check-verification-code', checkVerificationCode);
-accountRouter.patch('/users/verify-account', verifyAccount)
+accountRouter.patch('/users/verify-account', verifyAccount);
+accountRouter.patch('/users/resend-verification-code', resendVerificationCode)
 
 export {accountRouter} ;
