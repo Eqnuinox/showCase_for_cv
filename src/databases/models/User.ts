@@ -4,7 +4,7 @@ import Status from "./Status";
 
 interface UserAttributes {
     id?: number;
-    account_number?: string;
+    device_number?: string;
     first_name?: string;
     last_name?: string;
     email?: string;
@@ -20,7 +20,7 @@ export interface UserOutput extends Required<UserAttributes> {}
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> implements UserAttributes {
     public id!: number;
-    public account_number!: string;
+    public device_number!: string;
     public first_name!: string;
     public last_name!: string;
     public email!: string;
@@ -38,7 +38,7 @@ User.init({
         autoIncrement: true
     },
 
-    account_number: {
+    device_number: {
         type: DataTypes.STRING(9)
     },
 

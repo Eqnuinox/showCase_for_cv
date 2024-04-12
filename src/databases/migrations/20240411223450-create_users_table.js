@@ -11,7 +11,7 @@ module.exports = {
                 autoIncrement: true
             },
 
-            account_number: {
+            device_number: {
                 type: Sequelize.DataTypes.STRING(9)
             },
 
