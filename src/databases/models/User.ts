@@ -1,28 +1,32 @@
 import { DataTypes, InferAttributes, InferCreationAttributes, Model, Optional } from 'sequelize'
 import sequelizeConnection from "../sequelizeConnection";
+import Status from "./Status";
 
 interface UserAttributes {
     id?: number;
-    account_number?: string;
-    status?: string;
+    device_number?: string;
     first_name?: string;
     last_name?: string;
-    email: string;
+    email?: string;
     phone?: string;
     is_verified?: boolean;
-    last_logged_in?: Date;
     is_blocked?: boolean;
+    status_id: number;
 }
+
+export interface UserInput extends Optional<UserAttributes, 'id'> {}
+
+export interface UserOutput extends Required<UserAttributes> {}
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> implements UserAttributes {
     public id!: number;
-    public account_number!: string;
-    public status!: string;
+    public device_number!: string;
     public first_name!: string;
     public last_name!: string;
     public email!: string;
     public phone!: string;
     public is_verified!: boolean;
+    public status_id!: number;
     public is_blocked!: boolean;
 }
 
@@ -34,14 +38,10 @@ User.init({
         autoIncrement: true
     },
 
-    account_number: {
+    device_number: {
         type: DataTypes.STRING(9)
     },
 
-    status: {
-        type: DataTypes.STRING(10),
-        allowNull: true
-    },
 
     first_name: {
         type: DataTypes.STRING(50),
@@ -53,9 +53,18 @@ User.init({
         allowNull: true,
     },
 
+    status_id: {
+        type: DataTypes.NUMBER,
+        allowNull: true,
+        references: {
+            model: "Status",
+            key: 'id'
+        }
+    },
+
     email: {
         type: DataTypes.STRING(100),
-        allowNull: false,
+        allowNull: true,
         unique: true
     },
 
@@ -85,5 +94,10 @@ User.init({
     collate: 'utf8mb4'
 });
 
+User.hasOne(Status, {
+    sourceKey: "status_id",
+    foreignKey: "id",
+    as: "status",
+})
 
 export default User;
