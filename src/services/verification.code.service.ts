@@ -79,7 +79,7 @@ class VerificationCodeService {
             await this.checkExpiredVerificationCode(codeDB);
             await this.compareVerificationCode(data.verification_code, codeDB.verification_code);
             await this.VerificationCodeRepository.destroy(user.id);
-            return true;
+            return user;
 
         } catch (error) {
             throw error

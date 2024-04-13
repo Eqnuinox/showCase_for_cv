@@ -80,6 +80,18 @@ class UserService {
             throw error
         }
     }
+
+    public async login(email: string){
+        try {
+            let user = await this.userRepository.findOne({email});
+            if (!user) {
+                throw new ErrorService(404, 'User with this email nof found.')
+            }
+            await this.sendVerificationCode({user_id: user.id, email})
+        } catch (error){
+            throw error
+        }
+    }
 }
 
 export {UserService}

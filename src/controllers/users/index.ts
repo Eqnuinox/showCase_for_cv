@@ -12,6 +12,16 @@ export const createUser = async (req: Request, res: Response) => {
     }
 }
 
+export const login = async (req: Request, res: Response) => {
+    try {
+        let data = req.body;
+        await new UserService().login(data.email);
+        ResponseHelper.sendResponse(res, 'Inserted successfully')
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception);
+    }
+}
+
 export const updateUser = async (req: Request, res: Response) => {
     try {
         let {id, data} = req.body;
@@ -73,9 +83,9 @@ export const resendVerificationCode = async (req: Request, res: Response) => {
 
 export const checkVerificationCode = async (req: Request, res: Response) => {
     try {
-        const data: {user_id: number, verification_code: number} = req.body
-        await new VerificationCodeService().checkVerificationCode(data);
-        ResponseHelper.sendResponse(res, 'Successfully');
+        const data: { user_id: number, verification_code: number } = req.body
+        let user = await new VerificationCodeService().checkVerificationCode(data);
+        ResponseHelper.sendResponse(res, 'Successfully', user);
 
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
@@ -85,7 +95,7 @@ export const checkVerificationCode = async (req: Request, res: Response) => {
 export const verifyAccount = async (req: Request, res: Response) => {
     let {user_id, email} = req.body;
     try {
-        let user= await new UserService().verifiedUser(user_id, email);
+        let user = await new UserService().verifiedUser(user_id, email);
         ResponseHelper.sendResponse(res, 'Inserted successfully', user)
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
