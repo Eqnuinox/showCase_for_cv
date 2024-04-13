@@ -1,20 +1,18 @@
 import {DataTypes, InferAttributes, InferCreationAttributes, Model, Optional} from 'sequelize'
 import sequelizeConnection from "../sequelizeConnection";
+import {ProductInterface} from "../../interfaces/product.interface";
 
-interface ProductInterface {
-    id?: number;
-    title: string;
-    description?: string;
-    count: number;
-    price: string;
-}
 
 class Product extends Model<InferAttributes<Product>, InferCreationAttributes<Product>> implements ProductInterface {
     public id!: number;
     public title!: string;
     public description!: string;
     public count!: number;
-    public price!: string;
+    public max_price!: string
+    public min_price!: string
+    public orders_count!: number
+    public favorite_count!: number
+    public current_price!: number
 
 }
 
@@ -41,9 +39,25 @@ Product.init({
         allowNull: false,
     },
 
-    price: {
+    current_price: {
         type: DataTypes.STRING(10),
         allowNull: false
+    },
+    max_price: {
+        type: DataTypes.STRING(10),
+        allowNull: false
+    },
+    min_price: {
+        type: DataTypes.STRING(10),
+        allowNull: false
+    },
+    orders_count: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    favorite_count: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     },
 }, {
     sequelize: sequelizeConnection,

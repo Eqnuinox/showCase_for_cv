@@ -6,7 +6,7 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.createTable('products', {
             id: {
-                type: Sequelize.DataTypes.INTEGER,
+                type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
                 autoIncrement: true
@@ -27,10 +27,37 @@ module.exports = {
                 allowNull: false,
             },
 
-            price: {
+            current_price: {
                 type: DataTypes.STRING(10),
                 allowNull: false
             },
+            max_price: {
+                type: DataTypes.STRING(10),
+                allowNull: false
+            },
+            min_price: {
+                type: DataTypes.STRING(10),
+                allowNull: false
+            },
+            orders_count: {
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            favorite_count: {
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            created_at: {
+                type: Sequelize.DataTypes.DATE,
+                allowNull: false,
+                defaultValue: Sequelize.NOW
+            },
+
+            updated_at: {
+                type: Sequelize.DataTypes.DATE,
+                allowNull: false,
+                defaultValue: Sequelize.NOW
+            }
         })
 
     },

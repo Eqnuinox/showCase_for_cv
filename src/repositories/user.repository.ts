@@ -106,7 +106,6 @@ class UserRepository {
 
     public async findOne(data: any) {
         try {
-            console.log(data)
             this._transaction = await sequelizeConnection.transaction();
             let user = await User.findOne({where: {email: data.email}});
             if (!user) {

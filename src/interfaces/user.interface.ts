@@ -1,7 +1,7 @@
 export interface I_User {
     id: number;
     account_number?: string;
-    status?: string;
+    status_id?: string;
     first_name?: string;
     last_name?: string;
     email: string;
