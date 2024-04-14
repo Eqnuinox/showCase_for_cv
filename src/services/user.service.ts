@@ -81,6 +81,7 @@ class UserService {
             if (userExists) {
                 throw new ErrorService(409, 'User with this email already exists.')
             }
+            await this.updateUserStatus(user_id, ['User']);
             return await this.updateAccount(user_id, {email: email, is_verified: true})
         } catch (error) {
             throw error
