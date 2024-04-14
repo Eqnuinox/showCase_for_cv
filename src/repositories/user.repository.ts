@@ -6,6 +6,7 @@ import {generateRandomString} from "../utils/generate.account.number";
 import {ErrorService} from "../services";
 
 
+
 class UserRepository {
 
     get transaction() {
@@ -25,7 +26,6 @@ class UserRepository {
             // @ts-ignore
             const user = await User.create({
                 device_number: device_number,
-                status_id: 5
             }, {transaction: this._transaction});
             await this._transaction.commit();
             return user;

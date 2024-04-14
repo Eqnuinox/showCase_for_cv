@@ -18,7 +18,7 @@ class Product extends Model<InferAttributes<Product>, InferCreationAttributes<Pr
 
 Product.init({
     id: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
@@ -66,7 +66,7 @@ Product.init({
     modelName: 'Product',
     tableName: 'products',
     charset: 'utf8',
-    collate: 'utf8mb4'
+    collate: 'utf8_general_ci'
 });
 
 

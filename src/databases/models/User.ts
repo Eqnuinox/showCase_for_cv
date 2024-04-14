@@ -11,7 +11,6 @@ interface UserAttributes {
     phone?: string;
     is_verified?: boolean;
     is_blocked?: boolean;
-    status_id: number;
 }
 
 export interface UserInput extends Optional<UserAttributes, 'id'> {}
@@ -26,13 +25,12 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> i
     public email!: string;
     public phone!: string;
     public is_verified!: boolean;
-    public status_id!: number;
     public is_blocked!: boolean;
 }
 
 User.init({
     id: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
@@ -51,15 +49,6 @@ User.init({
     last_name: {
         type: DataTypes.STRING(50),
         allowNull: true,
-    },
-
-    status_id: {
-        type: DataTypes.NUMBER,
-        allowNull: true,
-        references: {
-            model: "Status",
-            key: 'id'
-        }
     },
 
     email: {
@@ -91,13 +80,8 @@ User.init({
     modelName: 'User',
     tableName: 'users',
     charset: 'utf8',
-    collate: 'utf8mb4'
+    collate: 'utf8_general_ci'
 });
 
-User.hasOne(Status, {
-    sourceKey: "status_id",
-    foreignKey: "id",
-    as: "status",
-})
 
 export default User;

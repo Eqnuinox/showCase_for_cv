@@ -1,3 +1,6 @@
+import User from "./models/User";
+
+
 require('dotenv').config()
 import {Dialect, Sequelize} from 'sequelize'
 
@@ -15,6 +18,10 @@ const sequelizeConnection = new Sequelize(dbName, dbUser, dbPassword, {
     port: dbPort,
     dialect: dbDriver,
     logging: false,
+    dialectOptions: {
+        charset: 'utf8', // Используйте utf8 вместо utf8mb4
+        collate: 'utf8_general_ci' // Используйте utf8_general_ci вместо utf8mb4
+    }
 })
 
 sequelizeConnection
@@ -25,4 +32,5 @@ sequelizeConnection
     .catch((err) => {
         console.log('Unable to connect to the database:', err);
     });
+
 export default sequelizeConnection

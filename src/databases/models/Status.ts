@@ -3,8 +3,7 @@ import sequelizeConnection from "../sequelizeConnection";
 
 interface StatusAttributes {
     id?: number;
-    code: string;
-    name: string;
+    status: string;
 }
 
 export interface StatusInput extends Optional<StatusAttributes, 'id'> {}
@@ -13,22 +12,17 @@ export interface StatusOutput extends Required<StatusAttributes> {}
 
 class Status extends Model <InferAttributes<Status>, InferCreationAttributes<Status>>{
     public id?: number;
-    public code!: string;
-    public name!: string;
+    public status!: string;
 }
 
 Status.init({
     id: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
-    code: {
-        type: DataTypes.STRING(3),
-        allowNull: false
-    },
-    name: {
+    status: {
         type: DataTypes.STRING(100),
         allowNull: false
     }
@@ -37,7 +31,10 @@ Status.init({
     timestamps: false,
     tableName: 'statuses',
     modelName: 'Status',
+    charset: 'utf8',
+    collate: 'utf8_general_ci'
 });
+
 
 
 

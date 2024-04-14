@@ -1,5 +1,6 @@
 import {DataTypes, InferAttributes, InferCreationAttributes, Model, Optional} from "sequelize";
 import sequelizeConnection from "../sequelizeConnection";
+import User from "./User";
 
 interface VerificationCodeAttributes {
     id?: number;
@@ -23,7 +24,7 @@ export interface VerificationOutput extends Required<VerificationCodeAttributes>
 
 VerificationCode.init({
     id: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
@@ -32,7 +33,7 @@ VerificationCode.init({
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "User",
+            model: User,
             key: 'id'
         }
     },
@@ -52,7 +53,7 @@ VerificationCode.init({
     modelName: 'VerificationCode',
     tableName: 'verificationCodes',
     charset: 'utf8',
-    collate: 'utf8mb4'
+    collate: 'utf8_general_ci'
 })
 
 export default VerificationCode;
