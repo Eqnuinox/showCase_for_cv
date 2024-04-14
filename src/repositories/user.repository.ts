@@ -77,6 +77,9 @@ class UserRepository {
             if (!user) {
                 throw new ErrorService(404, 'User not found');
             }
+            if (!statuses || !Array.isArray(statuses) || !statuses.length){
+                throw new ErrorService(400, 'Statuses array cannot be empty');
+            }
             await user.removeStatuses(user.statuses, {transaction: this._transaction})
             const currentStatuses = await Status.findAll({where: {status: statuses}});
             await user.addStatuses(currentStatuses, {transaction: this._transaction});
