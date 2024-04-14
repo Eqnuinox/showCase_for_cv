@@ -72,8 +72,14 @@ class UserService {
     public async verifiedUser(user_id: number, email: string) {
         try {
             let user = await this.userRepository.getUserById(user_id);
+            let allUsers = await this.getAllUsers();
             if (!user) {
                 throw new ErrorService(404, 'User with this email nof found.')
+            }
+
+            const userExists = allUsers.some(user => user.email === email);
+            if (userExists) {
+                throw new ErrorService(409, 'User with this email already exists.')
             }
             return await this.updateAccount(user_id, {email: email, is_verified: true})
         } catch (error) {
