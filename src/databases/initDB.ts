@@ -1,8 +1,4 @@
-import User from "./models/User";
-import Status from "./models/Status";
-import VerificationCode from "./models/VerificationCode";
-import Product from "./models/Product";
-
+import {Product, Status, User, UserRole, VerificationCode} from "./models";
 
 
 async function syncModels() {
@@ -11,6 +7,7 @@ async function syncModels() {
         await User.sync();
         await Product.sync();
         await VerificationCode.sync();
+        await UserRole.sync()
 
         console.log('Models have been successfully added to the source data.');
     } catch (error) {

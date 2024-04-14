@@ -1,4 +1,14 @@
-import { DataTypes, InferAttributes, InferCreationAttributes, Model, Optional } from 'sequelize'
+import {
+    BelongsToManyAddAssociationMixin,
+    BelongsToManyAddAssociationsMixin,
+    BelongsToManyGetAssociationsMixin,
+    BelongsToManyRemoveAssociationsMixin,
+    DataTypes,
+    InferAttributes,
+    InferCreationAttributes,
+    Model,
+    Optional
+} from 'sequelize'
 import sequelizeConnection from "../sequelizeConnection";
 import Status from "./Status";
 
@@ -26,6 +36,11 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> i
     public phone!: string;
     public is_verified!: boolean;
     public is_blocked!: boolean;
+    public readonly statuses?: Status[];
+
+    public addStatuses!: BelongsToManyAddAssociationsMixin<Status, number>;
+    public getStatuses!: BelongsToManyGetAssociationsMixin<Status>;
+    public removeStatuses!: BelongsToManyRemoveAssociationsMixin<Status, number>;
 }
 
 User.init({
@@ -83,5 +98,7 @@ User.init({
     collate: 'utf8_general_ci'
 });
 
+User.belongsToMany(Status, { through: 'userRole', as: 'statuses' ,onDelete: 'CASCADE' });
+Status.belongsToMany(User, { through: 'userRole', as: 'users' });
 
 export default User;

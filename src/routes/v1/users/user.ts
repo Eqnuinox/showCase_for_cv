@@ -5,7 +5,7 @@ import {
     getAllUsers,
     getUserById, login, resendVerificationCode,
     sendVerificationCode,
-    updateUser, verifyAccount
+    updateUser, updateUserStatus, verifyAccount
 } from "../../../controllers/users";
 
 const express = require("express");
@@ -20,6 +20,7 @@ accountRouter.post('/users/send-verification-code', sendVerificationCode);
 accountRouter.post('/users/check-verification-code', checkVerificationCode);
 accountRouter.patch('/users/verify-account', verifyAccount);
 accountRouter.patch('/users/resend-verification-code', resendVerificationCode);
-accountRouter.post('/users/login', login)
+accountRouter.post('/users/login', login);
+accountRouter.patch('/users/update-user-status', updateUserStatus)
 
 export {accountRouter} ;

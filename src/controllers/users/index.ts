@@ -101,3 +101,13 @@ export const verifyAccount = async (req: Request, res: Response) => {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
     }
 }
+
+export const updateUserStatus = async (req: Request, res: Response) => {
+    let {id, statuses} = req.body;
+    try {
+        let user = await new UserService().updateUserStatus(id, statuses);
+        ResponseHelper.sendResponse(res, 'Inserted successfully', user)
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}
