@@ -103,7 +103,7 @@ class UserService {
         try {
             let user = await this.userRepository.getUserById(id);
             if (!user) {
-                throw new ErrorService(404, 'User with this email nof found.')
+                throw new ErrorService(404, 'User nof found.')
             }
             return await this.userRepository.updateUserStatus(id, statuses);
         } catch (error) {
