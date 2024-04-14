@@ -98,7 +98,7 @@ User.init({
     collate: 'utf8_general_ci'
 });
 
-User.belongsToMany(Status, { through: 'userRole', as: 'statuses' ,onDelete: 'CASCADE' });
+User.belongsToMany(Status, { through: 'userRole', as: 'statuses'});
 Status.belongsToMany(User, { through: 'userRole', as: 'users' });
 
 export default User;

@@ -4,15 +4,23 @@ import Status from './Status';
 import {User} from "./index";
 
 interface UserRoleInterface {
+    id?: number
     userId: number
     statusId: number
 }
 class UserRole extends Model<InferAttributes<UserRole>, InferCreationAttributes<UserRole>> implements UserRoleInterface {
+    public id!: number;
     public userId!: number;
     public statusId!: number;
 }
 
 UserRole.init({
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
+    },
     userId: {
         type: DataTypes.INTEGER,
         primaryKey: true,

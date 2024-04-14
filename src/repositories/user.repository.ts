@@ -37,7 +37,6 @@ class UserRepository {
             }, {include: this.commonInclude, transaction: this._transaction});
             const statuses = await Status.findAll({where: {status: ['Guest']}});
 
-            // Добавьте статусы пользователю
             await user.addStatuses(statuses, {transaction: this._transaction});
             await this._transaction.commit();
             await user.reload();

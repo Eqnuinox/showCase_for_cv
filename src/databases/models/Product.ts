@@ -1,9 +1,24 @@
 import {DataTypes, InferAttributes, InferCreationAttributes, Model, Optional} from 'sequelize'
 import sequelizeConnection from "../sequelizeConnection";
-import {ProductInterface} from "../../interfaces/product.interface";
+import Category from "./Category";
+
+
+
+export interface ProductInterface {
+    id: number
+    title?: string
+    description?: string
+    max_price?: string
+    min_price?: string
+    count?: number
+    orders_count?: number
+    favorite_count?: number
+    current_price?: number
+}
 
 
 class Product extends Model<InferAttributes<Product>, InferCreationAttributes<Product>> implements ProductInterface {
+
     public id!: number;
     public title!: string;
     public description!: string;
@@ -14,6 +29,11 @@ class Product extends Model<InferAttributes<Product>, InferCreationAttributes<Pr
     public favorite_count!: number
     public current_price!: number
 
+    public categoryId!: number;
+
+
+
+
 }
 
 Product.init({
@@ -23,22 +43,18 @@ Product.init({
         primaryKey: true,
         autoIncrement: true
     },
-
     title: {
         type: DataTypes.STRING(50),
         allowNull: false
     },
-
     description: {
         type: DataTypes.STRING(255),
         allowNull: true
     },
-
     count: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-
     current_price: {
         type: DataTypes.STRING(10),
         allowNull: false
@@ -59,6 +75,10 @@ Product.init({
         type: DataTypes.INTEGER,
         allowNull: true
     },
+    categoryId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
 }, {
     sequelize: sequelizeConnection,
     createdAt: 'created_at',
@@ -69,5 +89,7 @@ Product.init({
     collate: 'utf8_general_ci'
 });
 
+Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'product_category' });
 
 export default Product;
+
