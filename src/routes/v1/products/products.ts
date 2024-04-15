@@ -1,7 +1,7 @@
 import {
     createProduct,
     deleteProduct,
-    getAllProducts,
+    getAllOrFiltersProducts,
     getProductById,
     updateProduct
 } from "../../../controllers/products";
@@ -9,7 +9,7 @@ import {
 const express = require("express");
 const productRouter = express.Router();
 
-productRouter.get('/products/all', getAllProducts)
+productRouter.get('/products/', getAllOrFiltersProducts)
 productRouter.post('/products/create', createProduct)
 productRouter.delete('/products/:id/delete', deleteProduct)
 productRouter.get('/products/:id', getProductById)
