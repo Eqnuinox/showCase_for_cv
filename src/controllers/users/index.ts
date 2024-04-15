@@ -1,7 +1,7 @@
 import {ResponseHelper} from "../../helpers/response";
 import {UserService} from "../../services/user.service";
 import {Request, Response} from "express";
-import {VerificationCodeService} from "../../services";
+import {ErrorService, TokenService, VerificationCodeService} from "../../services";
 
 export const createUser = async (req: Request, res: Response) => {
     try {
@@ -15,8 +15,11 @@ export const createUser = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
     try {
         let data = req.body;
-        await new UserService().login(data.email);
-        ResponseHelper.sendResponse(res, 'Inserted successfully')
+        const tokenService = new TokenService();
+        let user = await new UserService().login(data.email);
+        const tokens = await tokenService.generateTokens(user.id);
+        await tokenService.saveToken(user.id, tokens.refresh_token);
+        ResponseHelper.sendResponse(res, 'Inserted successfully', {...{user}, ...{tokens}})
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception);
     }
@@ -63,7 +66,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const sendVerificationCode = async (req: Request, res: Response) => {
     try {
-        const data: { user_id: number, email: string } = req.body;
+        const data: { email: string, user_id: number } = req.body;
         await new UserService().sendVerificationCode(data);
         ResponseHelper.sendResponse(res, 'Your code has been sent');
     } catch (exception: any) {
@@ -74,7 +77,7 @@ export const sendVerificationCode = async (req: Request, res: Response) => {
 export const resendVerificationCode = async (req: Request, res: Response) => {
     try {
         const {email, user_id} = req.body;
-        await new VerificationCodeService().resendVerificationCode(email, user_id);
+        await new VerificationCodeService().resendVerificationCode(user_id, email);
         ResponseHelper.sendResponse(res, 'Your code has been sent');
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
@@ -109,5 +112,18 @@ export const updateUserStatus = async (req: Request, res: Response) => {
         ResponseHelper.sendResponse(res, 'Inserted successfully', user)
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}
+
+export const refreshTokens = async (req: Request, res: Response) => {
+    try {
+        const refresh_token = req.headers.authorization;
+        if (!refresh_token) {
+            throw new ErrorService(403, 'Token not found');
+        }
+        const userData = await new UserService().refresh(refresh_token);
+        ResponseHelper.sendResponse(res, 'Refresh successfully', userData);
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception);
     }
 }

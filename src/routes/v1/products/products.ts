@@ -5,14 +5,15 @@ import {
     getProductById,
     updateProduct
 } from "../../../controllers/products";
+import {checkAccessUsersMiddleware} from "../../../middlewares/auth/checkAccessUsers.middleware";
 
 const express = require("express");
 const productRouter = express.Router();
 
-productRouter.get('/products/', getAllOrFiltersProducts)
-productRouter.post('/products/create', createProduct)
-productRouter.delete('/products/:id/delete', deleteProduct)
-productRouter.get('/products/:id', getProductById)
-productRouter.patch('/products/update', updateProduct)
+productRouter.get('/products/', checkAccessUsersMiddleware ,getAllOrFiltersProducts)
+productRouter.post('/products/create', checkAccessUsersMiddleware, createProduct)
+productRouter.delete('/products/:id/delete', checkAccessUsersMiddleware, deleteProduct)
+productRouter.get('/products/:id', checkAccessUsersMiddleware, getProductById)
+productRouter.patch('/products/update', checkAccessUsersMiddleware, updateProduct)
 
 export {productRouter} ;

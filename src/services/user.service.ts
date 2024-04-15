@@ -5,6 +5,7 @@ import {VerificationCodeRepository} from "repositories/verification-code.reposit
 import {ErrorService} from "./error.service";
 import {EmailService} from "./email.service";
 import {sendVerificationCode} from "../controllers/users";
+import {TokenService} from "./token.service";
 
 class UserService {
     protected userRepository: UserRepository;
@@ -55,11 +56,11 @@ class UserService {
         }
     }
 
-    public async sendVerificationCode(data: { user_id: number, email: string }) {
+    public async sendVerificationCode(data: { email: string, user_id: number }) {
         try {
             let user = await this.userRepository.getUserById(data.user_id);
             if (!user) {
-                throw new ErrorService(404, 'User with this email nof found.')
+                throw new ErrorService(404, 'User nof found.')
             }
             let verificationCode = await this.VerificationCodeRepository.create(user.id);
             await new EmailService().sendVerificationCode(data.email, String(verificationCode.verification_code))
@@ -94,9 +95,32 @@ class UserService {
             if (!user) {
                 throw new ErrorService(404, 'User with this email nof found.')
             }
-            await this.sendVerificationCode({user_id: user.id, email})
+            if (!user.is_verified) {
+                throw new ErrorService(400, 'User not verified');
+            }
+            return user
         } catch (error) {
             throw error
+        }
+    }
+
+    public async refresh(refresh_token: string) {
+        try {
+            const userData = await new TokenService().validateRefreshToken(refresh_token);
+            const tokenFromDB = await new TokenService().findToken(refresh_token);
+            if (!userData || !tokenFromDB) {
+                throw new ErrorService(401, 'User not authorized');
+            }
+            const user = await this.getUserById(userData.id);
+            if (!user){
+                throw new ErrorService(404, 'User nof found.')
+            }
+            await new TokenService().removeToken(refresh_token);
+            const tokens = await new TokenService().generateTokens(user.id);
+            await new TokenService().saveToken(user.id, tokens.refresh_token);
+            return {...{user: user}, ...{tokens}};
+        } catch (error) {
+            throw error;
         }
     }
 
