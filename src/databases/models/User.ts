@@ -1,5 +1,4 @@
 import {
-    BelongsToManyAddAssociationMixin,
     BelongsToManyAddAssociationsMixin,
     BelongsToManyGetAssociationsMixin,
     BelongsToManyRemoveAssociationsMixin,
@@ -23,9 +22,11 @@ interface UserAttributes {
     is_blocked?: boolean;
 }
 
-export interface UserInput extends Optional<UserAttributes, 'id'> {}
+export interface UserInput extends Optional<UserAttributes, 'id'> {
+}
 
-export interface UserOutput extends Required<UserAttributes> {}
+export interface UserOutput extends Required<UserAttributes> {
+}
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> implements UserAttributes {
     public id!: number;
@@ -98,7 +99,7 @@ User.init({
     collate: 'utf8_general_ci'
 });
 
-User.belongsToMany(Status, { through: 'userRole', as: 'statuses'});
-Status.belongsToMany(User, { through: 'userRole', as: 'users' });
+// User.belongsToMany(Status, { through: 'userRole', as: 'statuses'});
+// Status.belongsToMany(User, { through: 'userRole', as: 'users' });
 
 export default User;

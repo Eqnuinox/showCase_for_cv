@@ -1,4 +1,4 @@
-import {DataTypes, Model, InferAttributes, InferCreationAttributes, Optional} from 'sequelize'
+import {DataTypes, InferAttributes, InferCreationAttributes, Model, Optional} from 'sequelize'
 import sequelizeConnection from "../sequelizeConnection";
 import Product from "./Product";
 

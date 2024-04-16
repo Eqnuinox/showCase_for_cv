@@ -23,7 +23,7 @@ class TokenService {
         try {
             return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         } catch (e) {
-            return null;
+            return null
         }
     }
 
