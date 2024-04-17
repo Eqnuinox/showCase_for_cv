@@ -1,5 +1,5 @@
 import {Includeable, Transaction} from "sequelize";
-import {Category, Product} from "../databases/models";
+import {Category, Product, ProductCategory} from "../databases/models";
 import sequelizeConnection from "../databases/sequelizeConnection";
 import {ErrorService} from "../services";
 
@@ -38,10 +38,19 @@ class ProductRepository {
     public async createProduct(data: any) {
         try {
             this._transaction = await sequelizeConnection.transaction();
-            let product = await Product.create(data, {include: this.commonInclude, transaction: this._transaction});
+            let product = await Product.create(data, {transaction: this._transaction});
+            let {category_id} = data
+            let {id} = product
+            // @ts-ignore
+            let productCategory = await ProductCategory.create({
+                category_id: category_id,
+                product_id: id,
+            }, {include: {model: Category, as: 'product-category'}, transaction: this._transaction})
+            debugger
+            // @ts-ignore
             await this._transaction.commit();
             await product.reload();
-            return product
+            return {message: product, productCategory: productCategory}
         } catch (error) {
             if (this._transaction) {
                 await this._transaction.rollback()
@@ -85,7 +94,7 @@ class ProductRepository {
         }
     }
 
-    public async updateProduct(id: number, data: any){
+    public async updateProduct(id: number, data: any) {
         try {
             this._transaction = await sequelizeConnection.transaction();
             let product = await Product.findByPk(id, {include: this.commonInclude, transaction: this._transaction});
@@ -96,7 +105,7 @@ class ProductRepository {
             await this._transaction.commit();
             await product.reload();
             return product
-        } catch (error){
+        } catch (error) {
             if (this._transaction) {
                 await this._transaction.rollback()
             }

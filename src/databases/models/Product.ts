@@ -75,7 +75,7 @@ Product.init({
         allowNull: true
     },
     ratio: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DOUBLE,
         allowNull: false
     },
 }, {

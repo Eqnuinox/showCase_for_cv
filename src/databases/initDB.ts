@@ -25,8 +25,8 @@ async function syncModels() {
         await Token.sync();
         await UserLoyaltyRole.sync();
         await LoyaltyRoles.sync();
-        await Coupon.sync();
         await Category.sync();
+        await Coupon.sync();
         await UserRole.sync();
         await Product.sync();
         await FavoriteList.sync();

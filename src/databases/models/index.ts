@@ -67,7 +67,7 @@ Product.belongsToMany(Category, {foreignKey: 'product_id', through: ProductCateg
 User.hasMany(Coupon, {foreignKey: 'user_id', as: "users_coupons"})
 Coupon.belongsTo(User, {foreignKey: 'user_id', as: "users_coupons"})
 
-Coupon.hasMany(Category, {foreignKey: 'category_id', as: 'coupon_category'})
-Category.belongsTo(Coupon, {foreignKey: 'category_id', as: 'coupon_category'})
+Category.hasMany(Coupon, {foreignKey: 'category_id', as: 'coupon_category'})
+Coupon.belongsTo(Category, {foreignKey: 'category_id', as: 'coupon_category'})
 
 
