@@ -9,12 +9,7 @@ export const checkAccessUsersMiddleware = async (req: Request, res: Response, ne
             throw new ErrorService(500, 'Authorized token is empty');
         }
 
-        const accessToken = authorizationHeader;
-        if (!accessToken) {
-            throw new ErrorService(401, 'User not authorized');
-        }
-
-        const userData = await new TokenService().validateAccessToken(accessToken.split(' ')[1]);
+        const userData = await new TokenService().validateAccessToken(authorizationHeader.split(' ')[1]);
 
         if (!userData) {
             throw new ErrorService(401, 'User not authorized');

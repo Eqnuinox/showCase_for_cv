@@ -56,6 +56,15 @@ class UserService {
         }
     }
 
+    public async logout(refreshToken: string) {
+        try {
+            return await new TokenService().removeToken(refreshToken);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
     public async sendVerificationCode(data: { email: string, user_id: number }) {
         try {
             let user = await this.userRepository.getUserById(data.user_id);
@@ -112,7 +121,7 @@ class UserService {
                 throw new ErrorService(401, 'User not authorized');
             }
             const user = await this.getUserById(userData.id);
-            if (!user){
+            if (!user) {
                 throw new ErrorService(404, 'User nof found.')
             }
             await new TokenService().removeToken(refresh_token);

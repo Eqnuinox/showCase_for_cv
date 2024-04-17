@@ -1,4 +1,5 @@
-import {Category, Product} from "../databases/models";
+import {Category, Product, ProductCategory} from "../databases/models";
+import product from "../databases/models/Product";
 
 export const getProductsByFiltersOrAll = async (categoryName: string) => {
     //All
@@ -11,31 +12,31 @@ export const getProductsByFiltersOrAll = async (categoryName: string) => {
     }
 }
 
+let includeRule = {
+    include: [{
+        model: Category,
+        attributes: ['id', 'name'],
+        as: 'product_category',
+        through: {attributes: []}
+    }]
+};
+
 const getAllProducts = async () => {
-    return await Product.findAll({
-        include: [{
-            model: Category,
-            attributes: ['id', 'name'],
-            as: 'product_category',
-        }]
-    })
+    return await Product.findAll(includeRule)
 }
 
 const getProductsByCategory = async (categoryName: string) => {
-    const category = await Category.findOne({
-        where: {name: categoryName}
-    });
+    const category = await Category.findAll({where: {name: categoryName}});
 
     if (!category) {
         throw new Error(`Category with name ${categoryName} not found`);
     }
 
-    return await Product.findAll({
-        where: {categoryId: category?.id}, include: [{
-            model: Category,
-            attributes: ['id', 'name'],
-            as: 'product_category',
-        }]
-    });
+    const categoryId = category[0].id;
 
+    const productCategories = await ProductCategory.findAll({where: {category_id: categoryId}});
+
+    const productIds = productCategories.map((pc) => pc.product_id);
+    // @ts-ignore
+    return await Product.findAll({where: {id: productIds}, includeRule});
 }

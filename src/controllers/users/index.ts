@@ -127,3 +127,16 @@ export const refreshTokens = async (req: Request, res: Response) => {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception);
     }
 }
+
+export const logout = async (req: Request, res: Response) => {
+    try {
+        const refreshToken = req.headers.authorization;
+        if (!refreshToken) {
+            throw new ErrorService(403, 'Token not found');
+        }
+        await new UserService().logout(refreshToken);
+        ResponseHelper.sendResponse(res, 'Logout successfully');
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception);
+    }
+}
