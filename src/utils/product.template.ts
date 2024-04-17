@@ -12,17 +12,15 @@ export const getProductsByFiltersOrAll = async (categoryName: string) => {
     }
 }
 
-let includeRule = {
-    include: [{
-        model: Category,
-        attributes: ['id', 'name'],
-        as: 'product_category',
-        through: {attributes: []}
-    }]
-};
+let includeRule = [{
+    model: Category,
+    attributes: ['id', 'name'],
+    as: 'product_category',
+    through: {attributes: []}
+}];
 
 const getAllProducts = async () => {
-    return await Product.findAll(includeRule)
+    return await Product.findAll({include: includeRule})
 }
 
 const getProductsByCategory = async (categoryName: string) => {
@@ -38,5 +36,5 @@ const getProductsByCategory = async (categoryName: string) => {
 
     const productIds = productCategories.map((pc) => pc.product_id);
     // @ts-ignore
-    return await Product.findAll({where: {id: productIds}, includeRule});
+    return await Product.findAll({where: {id: productIds}, include: includeRule});
 }
