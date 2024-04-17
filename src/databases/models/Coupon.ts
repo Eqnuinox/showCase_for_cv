@@ -6,7 +6,7 @@ export interface CouponInterface {
     id?: number;
     expiration_date: Date;
     count: number;
-    coupon_body: number;
+    coupon_body: string;
     is_used: boolean;
 }
 
@@ -14,7 +14,7 @@ class Coupon extends Model<InferAttributes<Coupon>, InferCreationAttributes<Coup
     public id!: number;
     public expiration_date!: Date;
     public count!: number;
-    public coupon_body!: number;
+    public coupon_body!: string;
     public is_used!: boolean;
 }
 

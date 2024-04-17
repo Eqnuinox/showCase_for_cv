@@ -11,7 +11,7 @@ class TokenService {
     }
 
     public async generateTokens(id: number) {
-        const access_token = sign({id: id}, "access_secret", {expiresIn: "30m"});
+        const access_token = sign({id: id}, "access_secret", {expiresIn: "30d"});
         const refresh_token = sign({id: id}, "refresh_secret", {expiresIn: "30d"});
         return {
             access_token: access_token,
