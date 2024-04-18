@@ -39,8 +39,8 @@ Token.belongsTo(User, {foreignKey: 'user_id'})
 User.hasOne(Cart, {foreignKey: 'user_id', as: 'user_cart'})
 Cart.belongsTo(User, {foreignKey: 'user_id', as: 'user_cart'})
 
-Cart.hasMany(CartProduct, {foreignKey: 'card_id', as: 'products_in_cart'})
-CartProduct.belongsTo(Cart, {foreignKey: 'card_id', as: 'products_in_cart'})
+Cart.hasMany(CartProduct, {foreignKey: 'cart_id', as: 'products_in_cart'})
+CartProduct.belongsTo(Cart, {foreignKey: 'cart_id', as: 'products_in_cart'})
 
 Product.hasMany(CartProduct, {foreignKey: 'product_id', as: 'products_cart'})
 CartProduct.belongsTo(Product, {foreignKey: 'product_id', as: 'products_cart'})
@@ -72,8 +72,8 @@ Coupon.belongsTo(User, {foreignKey: 'user_id', as: "users_coupons"})
 Category.hasMany(Coupon, {foreignKey: 'category_id', as: 'coupon_category'})
 Coupon.belongsTo(Category, {foreignKey: 'category_id', as: 'coupon_category'})
 
-Transaction.hasMany(CartProduct, {foreignKey: 'cart_product_id', as: 'transaction_products'})
-CartProduct.belongsTo(Transaction, {foreignKey: 'cart_product_id', as: 'transaction_products'})
+CartProduct.hasMany(Transaction, {foreignKey: 'cart_product_id', as: 'transaction_products'})
+Transaction.belongsTo(CartProduct, {foreignKey: 'cart_product_id', as: 'transaction_products'})
 
 User.hasMany(Transaction, {foreignKey: 'transaction_id', as: 'user_transactions'})
 Transaction.belongsTo(User, {foreignKey: 'transaction_id', as: 'user_transactions'})

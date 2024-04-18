@@ -3,7 +3,8 @@ import sequelizeConnection from "../sequelizeConnection";
 
 
 export interface CartInterface {
-    id: number;
+    id?: number;
+    user_id?: number;
 }
 
 class Cart extends Model<InferAttributes<Cart>, InferCreationAttributes<Cart>> implements CartInterface {

@@ -1,9 +1,10 @@
-import {UserInput, UserOutput} from "databases/models/User";
+import {UserOutput} from "databases/models/User";
 import {Status, User} from "databases/models";
 import sequelizeConnection from "databases/sequelizeConnection";
 import {Includeable, Transaction} from "sequelize";
 import {generateRandomString} from "../utils/generate.account.number";
 import {ErrorService} from "../services";
+import {Cart} from "../databases/models";
 
 
 class UserRepository {
@@ -36,7 +37,8 @@ class UserRepository {
                 device_number: device_number,
             }, {include: this.commonInclude, transaction: this._transaction});
             const statuses = await Status.findAll({where: {status: ['Guest']}});
-
+            //@ts-ignore
+            await Cart.create({id: user.id, user_id: user.id}, {transaction: this._transaction});
             await user.addStatuses(statuses, {transaction: this._transaction});
             await this._transaction.commit();
             await user.reload();
@@ -76,7 +78,7 @@ class UserRepository {
             if (!user) {
                 throw new ErrorService(404, 'User not found');
             }
-            if (!statuses || !Array.isArray(statuses) || !statuses.length){
+            if (!statuses || !Array.isArray(statuses) || !statuses.length) {
                 throw new ErrorService(400, 'Statuses array cannot be empty');
             }
             await user.removeStatuses(user.statuses, {transaction: this._transaction})

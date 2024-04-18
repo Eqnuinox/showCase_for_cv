@@ -1,6 +1,6 @@
-import { couponRouter } from "./coupons/coupons";
-import { productRouter } from "./products";
-import { accountRouter } from "./users";
+import {couponRouter} from "./coupons/coupons";
+import {productRouter} from "./products";
+import {accountRouter} from "./users";
 
 /**
  * file to export other modules/default exports as one single module

@@ -8,7 +8,7 @@ export const getAllOrFiltersProducts = async (req: Request, res: Response) => {
         // let allProducts = await new ProductService().getAllProducts();
         const data = req.query;
         // @ts-ignore
-        let products =  await getProductsByFiltersOrAll(data.categoryName ?? '')
+        let products = await getProductsByFiltersOrAll(data.categoryName ?? '')
         ResponseHelper.sendResponse(res, 'Inserted successfully', products)
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
@@ -44,12 +44,22 @@ export const deleteProduct = async (req: Request, res: Response) => {
     }
 }
 
-
 export const updateProduct = async (req: Request, res: Response) => {
     try {
         let {id, data} = req.body;
         let product = await new ProductService().updateProduct(id, data);
         ResponseHelper.sendResponse(res, 'Inserted successfully', product)
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}
+
+export const addToCart = async (req: Request, res: Response) => {
+    try {
+        let {id, user_id} = req.body;
+        console.log(req.body)
+        let cartProduct = await new ProductService().addToCart(id, user_id);
+        ResponseHelper.sendResponse(res, 'Inserted successfully', cartProduct)
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
     }

@@ -47,6 +47,14 @@ class ProductService {
         }
     }
 
+    public async addToCart(id: number, user_id: number) {
+        try {
+            return await this.ProductRepository.addToCart(id, user_id);
+        } catch (error) {
+            throw error
+        }
+    }
+
 }
 
 export {ProductService}

@@ -31,8 +31,9 @@ async function syncModels() {
         await UserRole.sync();
         await Product.sync();
         await FavoriteList.sync();
-        await Transaction.sync()
         await CartProduct.sync();
+        await Transaction.sync()
+        
         await ProductCategory.sync();
 
 

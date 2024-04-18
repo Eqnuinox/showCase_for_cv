@@ -1,4 +1,5 @@
 import {
+    addToCart,
     createProduct,
     deleteProduct,
     getAllOrFiltersProducts,
@@ -16,6 +17,7 @@ productRouter.post('/products/create', checkAccessUsersMiddleware, checkAdminSta
 productRouter.delete('/products/:id/delete', checkAccessUsersMiddleware, checkAdminStatusMiddleware, deleteProduct)
 productRouter.get('/products/:id', checkAccessUsersMiddleware, getProductById)
 productRouter.patch('/products/update', checkAccessUsersMiddleware, checkAdminStatusMiddleware, updateProduct)
+productRouter.post('/products/add-to-cart/test', checkAccessUsersMiddleware, addToCart)
 
 
 export {productRouter} ;
