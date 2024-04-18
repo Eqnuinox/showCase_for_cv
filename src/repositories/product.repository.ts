@@ -43,7 +43,7 @@ class ProductRepository {
             let productCategory = await ProductCategory.create({
                 category_id: data.category_id,
                 product_id: product.id,
-            }, { transaction: this._transaction})
+            }, {transaction: this._transaction})
             await this._transaction.commit();
             await product.reload();
             return {message: product}

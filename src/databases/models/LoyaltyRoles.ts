@@ -26,7 +26,7 @@ LoyaltyRoles.init({
         allowNull: false,
     },
     loyal_ratio: {
-        type: DataTypes.DOUBLE,
+        type: DataTypes.FLOAT,
         allowNull: false,
     }
 }, {

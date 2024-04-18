@@ -12,6 +12,7 @@ import Coupon from "./Coupon";
 import FavoriteList from "./FavoriteList";
 import UserLoyaltyRole from "./UserLoyaltyRole";
 import LoyaltyRoles from "./LoyaltyRoles";
+import Transaction from "./Transaction";
 
 
 export {
@@ -28,7 +29,8 @@ export {
     Coupon,
     FavoriteList,
     UserLoyaltyRole,
-    LoyaltyRoles
+    LoyaltyRoles,
+    Transaction
 }
 
 User.hasOne(Token, {foreignKey: 'user_id'})
@@ -70,4 +72,11 @@ Coupon.belongsTo(User, {foreignKey: 'user_id', as: "users_coupons"})
 Category.hasMany(Coupon, {foreignKey: 'category_id', as: 'coupon_category'})
 Coupon.belongsTo(Category, {foreignKey: 'category_id', as: 'coupon_category'})
 
+Transaction.hasMany(CartProduct, {foreignKey: 'cart_product_id', as: 'transaction_products'})
+CartProduct.belongsTo(Transaction, {foreignKey: 'cart_product_id', as: 'transaction_products'})
 
+User.hasMany(Transaction, {foreignKey: 'transaction_id', as: 'user_transactions'})
+Transaction.belongsTo(User, {foreignKey: 'transaction_id', as: 'user_transactions'})
+
+Coupon.hasMany(Transaction, {foreignKey: "coupon_id", as: 'coupon'})
+Transaction.belongsTo(Coupon, {foreignKey: 'coupon_id', as: 'coupon'})

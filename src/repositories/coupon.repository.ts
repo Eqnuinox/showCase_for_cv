@@ -1,6 +1,6 @@
 import {Transaction} from "sequelize";
 import sequelizeConnection from "../databases/sequelizeConnection";
-import {Coupon, User} from "../databases/models";
+import {Category, Coupon, User} from "../databases/models";
 import {ErrorService} from "../services";
 import {generateRandomString} from "../utils/generate.account.number";
 
@@ -61,7 +61,12 @@ class CouponRepository {
                     {
                         model: User,
                         as: 'users_coupons',
-                        attributes: ['id', 'email'],
+                        attributes: ['email'],
+                    },
+                    {
+                        model: Category,
+                        as: 'coupon_category',
+                        attributes: ['name'],
                     }
                 ]
             });

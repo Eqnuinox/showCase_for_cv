@@ -5,7 +5,7 @@ import sequelizeConnection from "../sequelizeConnection";
 export interface CouponInterface {
     id?: number;
     expiration_date: Date;
-    count: number;
+    discount_price: number;
     coupon_body: string;
     is_used: boolean;
 }
@@ -13,7 +13,7 @@ export interface CouponInterface {
 class Coupon extends Model<InferAttributes<Coupon>, InferCreationAttributes<Coupon>> implements CouponInterface {
     public id!: number;
     public expiration_date!: Date;
-    public count!: number;
+    public discount_price!: number;
     public coupon_body!: string;
     public is_used!: boolean;
 }
@@ -29,12 +29,12 @@ Coupon.init({
         type: DataTypes.DATE,
         allowNull: false,
     },
-    count: {
-        type: DataTypes.INTEGER,
+    discount_price: {
+        type: DataTypes.STRING(10),
         allowNull: true,
     },
     coupon_body: {
-        type: DataTypes.STRING(25),
+        type: DataTypes.STRING(255),
         allowNull: true,
         unique: true,
     },
