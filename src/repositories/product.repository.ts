@@ -45,7 +45,7 @@ class ProductRepository {
             }, {transaction: this._transaction})
             await this._transaction.commit();
             await product.reload();
-            return  product
+            return product
         } catch (error) {
             if (this._transaction) {
                 await this._transaction.rollback()
@@ -107,19 +107,25 @@ class ProductRepository {
         try {
             this._transaction = await sequelizeConnection.transaction();
             let user = await User.findByPk(user_id, {transaction: this._transaction});
+            await this.getProductById(id);
+
             if (!user) {
                 throw new ErrorService(404, 'User not found');
             }
-            await this.getProductById(id);
 
             let cartProduct = await CartProduct.create({
                 cart_id: user_id,
                 product_id: id
             }, {
-                include: [{model: Product, as: 'products_cart'}, {
+                include: [{
+                    model: Product,
+                    as: 'products_cart',
+                    attributes: ['id', 'title', 'description', 'current_price']
+                }, {
                     model: Cart,
                     as: 'products_in_cart',
-                    include: [{model: User, as: 'user_cart', attributes: ['email']}]
+                    attributes: ['id'],
+                    include: [{model: User, as: 'user_cart', attributes: ['email', 'first_name', 'last_name']}]
                 }],
                 transaction: this._transaction
             });
@@ -133,6 +139,48 @@ class ProductRepository {
                 await this._transaction.rollback();
             }
             throw error;
+        }
+    }
+
+    public async removeFromCart(id: number) {
+        try {
+            this._transaction = await sequelizeConnection.transaction();
+            let cartProduct = await CartProduct.findByPk(id, {transaction: this._transaction})
+            if (!cartProduct) {
+                throw new ErrorService(404, 'CartProduct not found');
+            }
+            await cartProduct.destroy({transaction: this._transaction});
+            await this._transaction.commit();
+            return cartProduct;
+        } catch (error) {
+            if (this._transaction) {
+                await this._transaction.rollback();
+            }
+            throw error
+        }
+    }
+
+    public async getAllProductsInCart(cart_id: number) {
+        try {
+            this._transaction = await sequelizeConnection.transaction();
+            let allCartProducts = await CartProduct.findAll({
+                where: {cart_id},
+                include: [{
+                    model: Product,
+                    as: 'products_cart',
+                    attributes: ['id', 'title', 'description', 'current_price']
+                }]
+            })
+            if (!allCartProducts.length) {
+                throw new ErrorService(404, 'Cart not found')
+            }
+            await this._transaction.commit()
+            return allCartProducts
+        } catch (error) {
+            if (this._transaction) {
+                await this._transaction.rollback();
+            }
+            throw error
         }
     }
 }

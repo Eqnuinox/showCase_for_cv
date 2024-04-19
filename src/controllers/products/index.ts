@@ -2,6 +2,7 @@ import {ResponseHelper} from "../../helpers/response";
 import {Request, Response} from "express";
 import {ProductService} from "../../services/product.service";
 import {getProductsByFiltersOrAll} from "../../utils/product.template";
+import {ProductRepository} from "../../repositories";
 
 export const getAllOrFiltersProducts = async (req: Request, res: Response) => {
     try {
@@ -55,9 +56,28 @@ export const updateProduct = async (req: Request, res: Response) => {
 export const addToCart = async (req: Request, res: Response) => {
     try {
         let {id, user_id} = req.body;
-        console.log(req.body)
         let cartProduct = await new ProductService().addToCart(id, user_id);
         ResponseHelper.sendResponse(res, 'Inserted successfully', cartProduct)
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}
+
+export const removeFromCart = async (req: Request, res: Response) => {
+    try {
+        let id = req.params.id
+        let cartProduct = await new ProductService().removeFromCart(Number(id))
+        ResponseHelper.sendResponse(res, 'Inserted successfully', cartProduct)
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}
+
+export const getAllProductsInCart = async (req: Request, res: Response) => {
+    try {
+        let id = req.params.id
+        let allCartProducts = await new ProductRepository().getAllProductsInCart(Number(id))
+        ResponseHelper.sendResponse(res, 'Inserted successfully', allCartProducts)
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
     }

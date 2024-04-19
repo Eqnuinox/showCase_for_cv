@@ -55,6 +55,22 @@ class ProductService {
         }
     }
 
+    public async removeFromCart(id: number) {
+        try {
+            return await this.ProductRepository.removeFromCart(id)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    public async getAllProductsInCart(cart_id: number) {
+        try {
+            return await this.ProductRepository.getAllProductsInCart(cart_id)
+        } catch (error) {
+            throw error
+        }
+    }
+
 }
 
 export {ProductService}
