@@ -111,10 +111,7 @@ class ProductRepository {
             if (!user) {
                 throw new ErrorService(404, 'User not found');
             }
-            let product = await this.getProductById(id);
-            if (!product) {
-                throw new ErrorService(404, 'Product not found');
-            }
+            await this.getProductById(id);
 
             let cartProduct = await CartProduct.create({
                 cart_id: user_id,
