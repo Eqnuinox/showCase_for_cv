@@ -39,14 +39,13 @@ class ProductRepository {
         try {
             this._transaction = await sequelizeConnection.transaction();
             let product = await Product.create(data, {transaction: this._transaction});
-            // @ts-ignore
-            let productCategory = await ProductCategory.create({
+            await ProductCategory.create({
                 category_id: data.category_id,
                 product_id: product.id,
             }, {transaction: this._transaction})
             await this._transaction.commit();
             await product.reload();
-            return {message: product}
+            return  product
         } catch (error) {
             if (this._transaction) {
                 await this._transaction.rollback()

@@ -3,11 +3,11 @@ import sequelizeConnection from "../sequelizeConnection";
 
 
 export interface ProductCategoryInterface {
-    id: number;
+    id?: number;
 }
 
 class ProductCategory extends Model<InferAttributes<ProductCategory>, InferCreationAttributes<ProductCategory>> implements ProductCategoryInterface {
-    public id!: number;
+    public id?: number;
     public category_id?: number;
     public product_id?: number;
 
