@@ -10,7 +10,7 @@ export interface CartProductInterface {
 }
 
 class CartProduct extends Model<InferAttributes<CartProduct>, InferCreationAttributes<CartProduct>> implements CartProductInterface {
-    public id!: number;
+    public id?: number;
     public cart_id?: number;
     public product_id?: number;
 }

@@ -32,9 +32,9 @@ class CouponService {
         }
     }
 
-    public async getAllCoupons() {
+    public async getAllCoupons(user_id?: number) {
         try {
-            return await this.CouponRepository.getAllCoupons();
+            return await this.CouponRepository.getAllCoupons(user_id);
         } catch (error) {
             throw error
         }

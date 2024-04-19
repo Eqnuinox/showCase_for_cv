@@ -34,7 +34,8 @@ export const deleteCoupon = async (req: Request, res: Response) => {
 
 export const getAllCoupons = async (req: Request, res: Response) => {
     try {
-        let coupons = await new CouponService().getAllCoupons();
+        const {id} = req.query;
+        let coupons = await new CouponService().getAllCoupons(Number(id) ?? '');
         ResponseHelper.sendResponse(res, 'Inserted successfully', coupons)
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)

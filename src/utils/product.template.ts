@@ -1,7 +1,7 @@
 import {Category, Product, ProductCategory} from "../databases/models";
 import product from "../databases/models/Product";
 
-export const getProductsByFiltersOrAll = async (categoryName: string) => {
+export const getProductsByFiltersOrAll = async (categoryName?: string) => {
     //All
     if (!categoryName) {
         return await getAllProducts();
@@ -20,6 +20,7 @@ let includeRule = [{
 }];
 
 const getAllProducts = async () => {
+
     return await Product.findAll({include: includeRule})
 }
 

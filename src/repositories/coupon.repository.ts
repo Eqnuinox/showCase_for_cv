@@ -3,6 +3,7 @@ import sequelizeConnection from "../databases/sequelizeConnection";
 import {Category, Coupon, User} from "../databases/models";
 import {ErrorService} from "../services";
 import {generateRandomString} from "../utils/generate.account.number";
+import coupon from "../databases/models/Coupon";
 
 class CouponRepository {
     get transaction() {
@@ -83,25 +84,32 @@ class CouponRepository {
         }
     }
 
-    async getAllCoupons() {
+    async getAllCoupons(user_id?: number) {
         try {
             this._transaction = await sequelizeConnection.transaction();
-            let coupons = await Coupon.findAll({
+            let options: any = {
                 include: [
                     {
                         model: User,
                         as: 'users_coupons',
                         attributes: ['id', 'email']
                     }
-                ], transaction: this._transaction
-            })
+                ],
+                transaction: this._transaction
+            };
+
+            if (user_id) {
+                options.include[0].where = { id: user_id };
+            }
+
+            let coupons = await Coupon.findAll(options);
             await this._transaction.commit();
-            return coupons
+            return coupons;
         } catch (error) {
             if (this._transaction) {
-                await this._transaction.rollback()
+                await this._transaction.rollback();
             }
-            throw error
+            throw error;
         }
     }
 
@@ -112,7 +120,6 @@ class CouponRepository {
             if (!coupon) {
                 throw new ErrorService(404, 'Coupon not found')
             }
-            console.log(coupon)
             await coupon.update(data, {transaction: this._transaction});
             await this._transaction.commit();
             await coupon.reload();

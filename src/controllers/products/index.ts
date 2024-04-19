@@ -5,10 +5,8 @@ import {getProductsByFiltersOrAll} from "../../utils/product.template";
 
 export const getAllOrFiltersProducts = async (req: Request, res: Response) => {
     try {
-        // let allProducts = await new ProductService().getAllProducts();
-        const data = req.query;
-        // @ts-ignore
-        let products = await getProductsByFiltersOrAll(data.categoryName ?? '')
+        let data = req.query;
+        let products = await getProductsByFiltersOrAll(data.categoryName as string ?? '')
         ResponseHelper.sendResponse(res, 'Inserted successfully', products)
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
