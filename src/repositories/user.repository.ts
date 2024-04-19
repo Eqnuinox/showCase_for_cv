@@ -116,54 +116,38 @@ class UserRepository {
 
     public async getAllUsers() {
         try {
-            this._transaction = await sequelizeConnection.transaction();
             const allUsers = await User.findAll({
                 include: this.commonInclude,
-                transaction: this._transaction
             });
-            await this._transaction.commit();
             return allUsers;
         } catch (error) {
-            if (this._transaction) {
-                await this._transaction.rollback()
-            }
             throw error
         }
     }
 
     public async getUserById(id: number) {
         try {
-            this._transaction = await sequelizeConnection.transaction();
             let user = await User.findByPk(id, {
                 include: this.commonInclude,
-                transaction: this._transaction
             });
             if (!user) {
                 throw new ErrorService(404, 'User not found');
             }
-            await this._transaction.commit();
             return user;
         } catch (error) {
-            if (this._transaction) {
-                await this._transaction.rollback()
-            }
             throw error
         }
     }
 
     public async findOne(data: any) {
         try {
-            this._transaction = await sequelizeConnection.transaction();
             let user = await User.findOne({where: {email: data.email}, include: this.commonInclude,});
             if (!user) {
                 throw new ErrorService(404, 'User not found');
             }
-            await this._transaction.commit();
             return user
         } catch (error) {
-            if (this._transaction) {
-                await this._transaction.rollback()
-            }
+            throw error
         }
     }
 }

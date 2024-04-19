@@ -48,30 +48,20 @@ class TokenRepository {
 
     public async findOne(data: any) {
         try {
-            this._transaction = await sequelizeConnection.transaction();
             let token = await Token.findOne(data);
-            await this._transaction.commit();
             return token
         } catch (error) {
-            if (this._transaction) {
-                await this._transaction.rollback()
-            }
             throw error
         }
     }
 
     public async findTokenByUserId(user_id: number) {
         try {
-            this._transaction = await sequelizeConnection.transaction();
             let token = await Token.findOne({where: {
                 user_id: user_id
                 }});
-            await this._transaction.commit();
             return token
         } catch (error) {
-            if (this._transaction) {
-                await this._transaction.rollback()
-            }
             throw error
         }
     }

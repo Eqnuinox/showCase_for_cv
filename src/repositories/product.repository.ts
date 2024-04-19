@@ -73,7 +73,7 @@ class ProductRepository {
 
     public async getProductById(id: number) {
         try {
-            let product = await Product.findByPk(id, {include: this.commonInclude, transaction: this._transaction});
+            let product = await Product.findByPk(id, {include: this.commonInclude});
             if (!product) {
                 throw new ErrorService(404, 'Product not found');
             }
@@ -162,7 +162,6 @@ class ProductRepository {
 
     public async getAllProductsInCart(cart_id: number) {
         try {
-            this._transaction = await sequelizeConnection.transaction();
             let allCartProducts = await CartProduct.findAll({
                 where: {cart_id},
                 include: [{
@@ -174,12 +173,8 @@ class ProductRepository {
             if (!allCartProducts.length) {
                 throw new ErrorService(404, 'Cart not found')
             }
-            await this._transaction.commit()
             return allCartProducts
         } catch (error) {
-            if (this._transaction) {
-                await this._transaction.rollback();
-            }
             throw error
         }
     }

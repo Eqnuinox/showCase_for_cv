@@ -56,7 +56,6 @@ class CouponRepository {
 
     async findOne(data: any) {
         try {
-            this._transaction = await sequelizeConnection.transaction();
             let coupon = await Coupon.findOne({
                 where: {id: data.id}, include: [
                     {
@@ -74,19 +73,14 @@ class CouponRepository {
             if (!coupon) {
                 throw new ErrorService(404, 'Coupon not found')
             }
-            await this._transaction.commit();
             return coupon;
         } catch (error) {
-            if (this._transaction) {
-                await this._transaction.rollback()
-            }
             throw error
         }
     }
 
     async getAllCoupons(user_id?: number) {
         try {
-            this._transaction = await sequelizeConnection.transaction();
             let options: any = {
                 include: [
                     {
@@ -95,7 +89,6 @@ class CouponRepository {
                         attributes: ['id', 'email']
                     }
                 ],
-                transaction: this._transaction
             };
 
             if (user_id) {
@@ -103,12 +96,8 @@ class CouponRepository {
             }
 
             let coupons = await Coupon.findAll(options);
-            await this._transaction.commit();
             return coupons;
         } catch (error) {
-            if (this._transaction) {
-                await this._transaction.rollback();
-            }
             throw error;
         }
     }
