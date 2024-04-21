@@ -160,6 +160,30 @@ class ProductRepository {
         }
     }
 
+    public async getAllProductsInCartByUserId(id: number) {
+        try {
+            let cart = await Cart.findOne({where: {user_id: id}});
+            let allCartProducts = await CartProduct.findAll({
+                where: {cart_id: cart?.id},
+                include: [{
+                    model: Product,
+                    as: 'products_cart',
+                    attributes: ['id', 'title', 'description', 'current_price'],
+                    include: [{
+                        model: Category,
+                        as: 'product_category',
+                    }]
+                }]
+            })
+            if (!allCartProducts.length) {
+                throw new ErrorService(404, 'Cart not found')
+            }
+            return allCartProducts
+        } catch (error) {
+            throw error
+        }
+    }
+
     public async getAllProductsInCart(cart_id: number) {
         try {
             let allCartProducts = await CartProduct.findAll({

@@ -1,6 +1,6 @@
 import {Transaction} from "sequelize";
 import sequelizeConnection from "../databases/sequelizeConnection";
-import {CartProduct, Invoice, User} from "../databases/models";
+import {Cart, CartProduct, Invoice, User} from "../databases/models";
 import transaction from "../databases/models/Transaction";
 import {CouponRepository, ProductRepository, UserRepository} from "repositories";
 import {ErrorService} from "../services";
@@ -28,19 +28,19 @@ class InvoiceRepository {
 
     private _transaction: Transaction | undefined;
 
-    async createInvoice(data: any, user_id:number) {
+    async createInvoice(user_id:number) {
         try {
             this._transaction = await sequelizeConnection.transaction();
-            let {cart_product_id} = data;
 
             // Fetch user
             const user = await this.UserRepository.getUserById(user_id);
             if (!user) {
                 throw new ErrorService(404, 'User not found');
             }
-
+            let cart = await Cart.findOne({where: {user_id}});
+            let cart_product = await CartProduct.findOne({where: {cart_id: cart?.id}});
             // Fetch products in cart
-            const products = await this.ProductRepository.getAllProductsInCart(cart_product_id);
+            const products = await this.ProductRepository.getAllProductsInCartByUserId(user_id);
             if (!products || !products.length) {
                 throw new ErrorService(404, 'Products in cart not found');
             }
@@ -55,7 +55,7 @@ class InvoiceRepository {
                 user_id: user.id,
                 price: String(totalPrice),
                 success: false,
-                cart_product_id,
+                cart_product_id: cart_product?.id,
                 final_price: String(totalPrice)
             }, {transaction: this._transaction});
 
@@ -89,12 +89,12 @@ class InvoiceRepository {
         }
     }
 
-    async updateInvoice(id: number, user_id: number, cart_product_id: number, data: any) {
+    async updateInvoice(id: number, data: any, user_id: number) {
         try {
             this._transaction = await sequelizeConnection.transaction();
             let invoice = await this.getInvoiceById(id);
             let coupons = await this.CouponRepository.getAllCoupons(user_id);
-            const products = await this.ProductRepository.getAllProductsInCart(cart_product_id);
+            const products = await this.ProductRepository.getAllProductsInCartByUserId(user_id);
             if (!products || !products.length) {
                 throw new ErrorService(404, 'Products in cart not found');
             }
@@ -119,6 +119,7 @@ class InvoiceRepository {
             if (current_coupon?.is_applied && data?.success) {
                 await this.CouponRepository.update(current_coupon.id, {is_used: true});
             }
+            console.log(data)
             await invoice.update(data, {transaction: this._transaction});
             await this._transaction.commit();
             await invoice.reload();

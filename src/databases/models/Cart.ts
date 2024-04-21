@@ -9,6 +9,7 @@ export interface CartInterface {
 
 class Cart extends Model<InferAttributes<Cart>, InferCreationAttributes<Cart>> implements CartInterface {
     public id!: number;
+    public user_id?:number
 }
 
 Cart.init({
