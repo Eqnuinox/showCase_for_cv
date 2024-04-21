@@ -119,7 +119,7 @@ class InvoiceRepository {
             if (current_coupon?.is_applied && data?.success) {
                 await this.CouponRepository.update(current_coupon.id, {is_used: true});
             }
-            console.log(data)
+
             await invoice.update(data, {transaction: this._transaction});
             await this._transaction.commit();
             await invoice.reload();

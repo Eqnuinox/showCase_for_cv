@@ -107,6 +107,11 @@ class ProductRepository {
         try {
             this._transaction = await sequelizeConnection.transaction();
             let user = await User.findByPk(user_id, {transaction: this._transaction});
+            let product = await Product.findOne({where: {id}});
+            if ((product?.count as number) < 1) {
+                throw new ErrorService(404, 'The product is out of stock')
+            }
+            await product?.update({count: product?.count - 1});
             await this.getProductById(id);
 
             if (!user) {
@@ -145,7 +150,9 @@ class ProductRepository {
     public async removeFromCart(id: number) {
         try {
             this._transaction = await sequelizeConnection.transaction();
-            let cartProduct = await CartProduct.findByPk(id, {transaction: this._transaction})
+            let cartProduct = await CartProduct.findByPk(id, {transaction: this._transaction});
+            let product = await Product.findOne({where: {id: cartProduct?.product_id}});
+            await product?.update({count: product?.count + 1});
             if (!cartProduct) {
                 throw new ErrorService(404, 'CartProduct not found');
             }
