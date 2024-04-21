@@ -1,4 +1,5 @@
 import {InvoiceRepository} from "repositories";
+import {RedisService} from "./redis.service";
 
 class InvoiceService {
     protected InvoiceRepository: InvoiceRepository;
@@ -9,6 +10,7 @@ class InvoiceService {
 
     public async createInvoice(user_id: number) {
         try {
+
             return await this.InvoiceRepository.createInvoice(user_id);
         } catch (error) {
             throw error
@@ -34,6 +36,7 @@ class InvoiceService {
     public async updateInvoice(id: number, data: any, user_id: number){
         try {
             return await this.InvoiceRepository.updateInvoice(id, data, user_id);
+
         } catch (error){
             throw error
         }

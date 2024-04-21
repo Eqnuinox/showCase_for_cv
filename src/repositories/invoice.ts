@@ -2,7 +2,7 @@ import {Transaction} from "sequelize";
 import sequelizeConnection from "../databases/sequelizeConnection";
 import {Cart, CartProduct, Invoice, Product, User} from "../databases/models";
 import {CouponRepository, ProductRepository, UserRepository} from "repositories";
-import {ErrorService} from "../services";
+import {ErrorService, RedisService} from "../services";
 
 
 class InvoiceRepository {
@@ -10,11 +10,14 @@ class InvoiceRepository {
     private UserRepository: UserRepository;
     private CouponRepository: CouponRepository;
     private ProductRepository: ProductRepository;
+    private RedisService: RedisService;
+
 
     constructor() {
         this.UserRepository = new UserRepository();
         this.CouponRepository = new CouponRepository();
         this.ProductRepository = new ProductRepository();
+        this.RedisService = new RedisService();
     }
 
     get transaction() {
@@ -84,7 +87,7 @@ class InvoiceRepository {
             await invoice.reload();
 
             // find invoice after invoice-id were added to cartProduct
-            return await Invoice.findOne({
+            let updatedInvoice = await Invoice.findOne({
                 where: {id: invoice.id},
                 include: {
                     model: CartProduct,
@@ -95,6 +98,12 @@ class InvoiceRepository {
                     }]
                 },
             })
+
+            let client = await this.RedisService.connectRedis();
+            await client.json.set(`invoice:${invoice?.id}`, '$', updatedInvoice);
+            await this.RedisService.closeRedis();
+
+            return updatedInvoice
 
         } catch (error) {
             if (this._transaction) {
@@ -136,13 +145,18 @@ class InvoiceRepository {
                 await this.CouponRepository.update(current_coupon.id, {is_used: true});
             }
 
-            if (data?.success) {
-                await CartProduct.destroy({where: {cart_id: cart?.id}, transaction: this._transaction})
-            }
-
             await invoice.update(data, {transaction: this._transaction});
             await this._transaction.commit();
             await invoice.reload();
+
+            let client = await this.RedisService.connectRedis();
+            await client.json.set(`invoice:${invoice?.id}`, '$', invoice);
+            await this.RedisService.closeRedis();
+
+            if (data?.success) {
+                await CartProduct.destroy({where: {cart_id: cart?.id}})
+            }
+
             return invoice
         } catch (error) {
             if (this._transaction) {
