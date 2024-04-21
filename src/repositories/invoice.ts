@@ -89,10 +89,40 @@ class InvoiceRepository {
         }
     }
 
-    async updateInvoice(data: any) {
+    async updateInvoice(id: number, user_id: number, cart_product_id: number, data: any) {
         try {
             this._transaction = await sequelizeConnection.transaction();
+            let invoice = await this.getInvoiceById(id);
+            let coupons = await this.CouponRepository.getAllCoupons(user_id);
+            const products = await this.ProductRepository.getAllProductsInCart(cart_product_id);
+            if (!products || !products.length) {
+                throw new ErrorService(404, 'Products in cart not found');
+            }
+            // @ts-ignore
+            const local_category_id = products.length > 0 ? products[0].products_cart.product_category[0].id : null;
 
+            const current_coupon = coupons.find(coupon => coupon.category_id === local_category_id && coupon.is_applied && new Date(coupon.expiration_date).getTime() >= new Date().getTime());
+
+            // @ts-ignore
+            const totalPrice = products.reduce((acc, item) => acc + parseFloat(item.products_cart.current_price), 0);
+
+            let discount = current_coupon ? String(current_coupon.discount_price) : null;
+            let finalPrice = current_coupon ? String(totalPrice - Number(current_coupon.discount_price)) : String(totalPrice);
+
+            await invoice.update({
+                coupon_id: current_coupon ? current_coupon.id : null,
+                discount,
+                final_price: finalPrice
+            }, { transaction: this._transaction });
+
+
+            if (current_coupon?.is_applied && data?.success) {
+                await this.CouponRepository.update(current_coupon.id, {is_used: true});
+            }
+            await invoice.update(data, {transaction: this._transaction});
+            await this._transaction.commit();
+            await invoice.reload();
+            return invoice
         } catch (error) {
             if (this._transaction) {
                 await this._transaction.rollback()
@@ -101,10 +131,13 @@ class InvoiceRepository {
         }
     }
 
-    async getInvoiceByUserId(user_id: number) {
+    async getInvoiceById(id: number) {
         try {
-
-
+            let invoice = await Invoice.findByPk(id);
+            if (!invoice) {
+                throw new ErrorService(404, 'Invoice not found');
+            }
+            return invoice
         } catch (error) {
             throw error
         }

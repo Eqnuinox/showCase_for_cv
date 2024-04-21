@@ -22,6 +22,22 @@ class InvoiceService {
             throw error
         }
     }
+
+    public async getInvoiceById(id: number){
+        try {
+            return await this.InvoiceRepository.getInvoiceById(id);
+        } catch (error){
+            throw error
+        }
+    }
+
+    public async updateInvoice(id: number, user_id: number, cart_product_id: number, data: any){
+        try {
+            return await this.InvoiceRepository.updateInvoice(id, user_id, cart_product_id, data);
+        } catch (error){
+            throw error
+        }
+    }
 }
 
 export {InvoiceService};

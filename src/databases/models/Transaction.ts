@@ -5,11 +5,11 @@ import sequelizeConnection from "../sequelizeConnection";
 export interface InvoiceInterface {
     id?: number;
     price: string;
-    discount?: string;
+    discount?: string | null;
     final_price?: string;
     success: boolean;
     cart_product_id?: number;
-    coupon_id?: number;
+    coupon_id?: number | null;
     user_id?: number;
 
 }
@@ -17,12 +17,12 @@ export interface InvoiceInterface {
 class Invoice extends Model<InferAttributes<Invoice>, InferCreationAttributes<Invoice>> implements InvoiceInterface {
     public id?: number;
     public price!: string;
-    public discount?: string;
+    public discount?: string | null;
     public final_price?: string;
     public success!: boolean;
     public cart_product_id?: number;
     public user_id?: number;
-    public coupon_id?: number;
+    public coupon_id?: number | null;
 }
 
 Invoice.init({

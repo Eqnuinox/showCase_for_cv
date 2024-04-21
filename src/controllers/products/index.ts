@@ -26,7 +26,6 @@ export const createProduct = async (req: Request, res: Response) => {
 export const getProductById = async (req: Request, res: Response) => {
     try {
         let id = req.params.id;
-        console.log(id)
         let product = await new ProductService().getProductById(Number(id));
         ResponseHelper.sendResponse(res, 'Inserted successfully', product)
     } catch (exception: any) {
