@@ -123,7 +123,7 @@ class InvoiceRepository {
             }
 
             if (data?.success){
-                await CartProduct.destroy({where: {cart_id: cart?.id}})
+                await CartProduct.destroy({where: {cart_id: cart?.id}, transaction: this._transaction})
             }
 
             await invoice.update(data, {transaction: this._transaction});
