@@ -8,6 +8,9 @@ export interface CouponInterface {
     discount_price: number;
     coupon_body: string;
     is_used: boolean;
+    is_applied: boolean;
+    category_id?: number;
+    user_id?: number;
 }
 
 class Coupon extends Model<InferAttributes<Coupon>, InferCreationAttributes<Coupon>> implements CouponInterface {
@@ -16,6 +19,9 @@ class Coupon extends Model<InferAttributes<Coupon>, InferCreationAttributes<Coup
     public discount_price!: number;
     public coupon_body!: string;
     public is_used!: boolean;
+    public is_applied!: boolean;
+    public category_id?: number;
+    public user_id?: number;
 }
 
 Coupon.init({
@@ -39,6 +45,10 @@ Coupon.init({
         unique: true,
     },
     is_used: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    },
+    is_applied: {
         type: DataTypes.BOOLEAN,
         allowNull: false
     }

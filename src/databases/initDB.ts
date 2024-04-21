@@ -9,7 +9,7 @@ import {
     ProductCategory,
     Status,
     Token,
-    Transaction,
+    Invoice,
     User,
     UserLoyaltyRole,
     UserRole,
@@ -32,8 +32,8 @@ async function syncModels() {
         await Product.sync();
         await FavoriteList.sync();
         await CartProduct.sync();
-        await Transaction.sync()
-        
+        await Invoice.sync()
+
         await ProductCategory.sync();
 
 

@@ -2,25 +2,30 @@ import {DataTypes, InferAttributes, InferCreationAttributes, Model} from 'sequel
 import sequelizeConnection from "../sequelizeConnection";
 
 
-export interface TransactionInterface {
-    id: number;
-    price: number;
-    discount: number;
-    final_price: number;
+export interface InvoiceInterface {
+    id?: number;
+    price: string;
+    discount?: string;
+    final_price?: string;
     success: boolean;
-
+    cart_product_id?: number;
+    coupon_id?: number;
+    user_id?: number;
 
 }
 
-class Transaction extends Model<InferAttributes<Transaction>, InferCreationAttributes<Transaction>> implements TransactionInterface {
-    public id!: number;
-    public price!: number;
-    public discount!: number;
-    public final_price!: number;
+class Invoice extends Model<InferAttributes<Invoice>, InferCreationAttributes<Invoice>> implements InvoiceInterface {
+    public id?: number;
+    public price!: string;
+    public discount?: string;
+    public final_price?: string;
     public success!: boolean;
+    public cart_product_id?: number;
+    public user_id?: number;
+    public coupon_id?: number;
 }
 
-Transaction.init({
+Invoice.init({
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -33,7 +38,7 @@ Transaction.init({
     },
     discount: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     final_price: {
         type: DataTypes.STRING,
@@ -48,11 +53,11 @@ Transaction.init({
     sequelize: sequelizeConnection,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
-    modelName: 'Transaction',
-    tableName: 'transactions',
+    modelName: 'Invoice',
+    tableName: 'invoices',
     charset: 'utf8',
     collate: 'utf8_general_ci'
 });
 
-export default Transaction;
+export default Invoice;
 

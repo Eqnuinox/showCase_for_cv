@@ -23,6 +23,7 @@ class CouponRepository {
             let coupon = await Coupon.create({
                 ...data,
                 is_used: false,
+                is_applied: false,
                 coupon_body: coupon_body
             })
             await this._transaction.commit();
@@ -57,7 +58,7 @@ class CouponRepository {
     async findOne(data: any) {
         try {
             let coupon = await Coupon.findOne({
-                where: {id: data.id}, include: [
+                where: {id: data?.id}, include: [
                     {
                         model: User,
                         as: 'users_coupons',
@@ -87,6 +88,10 @@ class CouponRepository {
                         model: User,
                         as: 'users_coupons',
                         attributes: ['id', 'email']
+                    },
+                    {
+                        model: Category,
+                        as: 'coupon_category',
                     }
                 ],
             };

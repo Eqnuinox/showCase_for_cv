@@ -39,6 +39,7 @@ class CouponService {
             throw error
         }
     }
+
 }
 
 export {CouponService}
