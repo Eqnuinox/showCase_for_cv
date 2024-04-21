@@ -5,7 +5,8 @@ import {InvoiceService} from "../../services";
 export const createInvoice = async (req: Request, res: Response) => {
     try {
         let data = req.body;
-        let invoice = await new InvoiceService().createInvoice(data);
+        let user_id = data.user.id
+        let invoice = await new InvoiceService().createInvoice(data, Number(user_id));
         ResponseHelper.sendResponse(res, 'Inserted successfully', invoice);
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
@@ -35,8 +36,9 @@ export const getInvoiceById = async (req: Request, res: Response) => {
 
 export const updateInvoice = async (req: Request, res: Response) => {
     try {
-        let {id, user_id, cart_product_id, data} = req.body;
-        let invoice = await new InvoiceService().updateInvoice(id, user_id, cart_product_id, data);
+        let {id, cart_product_id, data} = req.body;
+        let user_id = req.body.user.id;
+        let invoice = await new InvoiceService().updateInvoice(id, Number(user_id), cart_product_id, data);
         ResponseHelper.sendResponse(res, 'Inserted successfully', invoice);
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)

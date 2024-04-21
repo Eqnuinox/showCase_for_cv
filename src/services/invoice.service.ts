@@ -7,9 +7,9 @@ class InvoiceService {
         this.InvoiceRepository = new InvoiceRepository;
     }
 
-    public async createInvoice(data: any) {
+    public async createInvoice(data: any, user_id: number) {
         try {
-            return await this.InvoiceRepository.createInvoice(data);
+            return await this.InvoiceRepository.createInvoice(data, user_id);
         } catch (error) {
             throw error
         }

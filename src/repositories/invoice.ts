@@ -28,10 +28,10 @@ class InvoiceRepository {
 
     private _transaction: Transaction | undefined;
 
-    async createInvoice(data: any) {
+    async createInvoice(data: any, user_id:number) {
         try {
             this._transaction = await sequelizeConnection.transaction();
-            let {user_id, cart_product_id} = data;
+            let {cart_product_id} = data;
 
             // Fetch user
             const user = await this.UserRepository.getUserById(user_id);
