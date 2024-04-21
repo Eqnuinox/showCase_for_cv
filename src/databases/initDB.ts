@@ -4,12 +4,12 @@ import {
     Category,
     Coupon,
     FavoriteList,
+    Invoice,
     LoyaltyRoles,
     Product,
     ProductCategory,
     Status,
     Token,
-    Invoice,
     User,
     UserLoyaltyRole,
     UserRole,
@@ -24,16 +24,15 @@ async function syncModels() {
         await Cart.sync();
         await VerificationCode.sync();
         await Token.sync();
-        await UserLoyaltyRole.sync();
         await LoyaltyRoles.sync();
+        await UserLoyaltyRole.sync();
         await Category.sync();
         await Coupon.sync();
         await UserRole.sync();
         await Product.sync();
         await FavoriteList.sync();
-        await CartProduct.sync();
         await Invoice.sync()
-
+        await CartProduct.sync();
         await ProductCategory.sync();
 
 

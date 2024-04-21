@@ -60,8 +60,8 @@ FavoriteList.belongsTo(Product, {foreignKey: 'product_id', as: 'favorite_product
 User.hasOne(UserLoyaltyRole, {foreignKey: 'user_id', as: 'user_loyalty_role'})
 UserLoyaltyRole.belongsTo(User, {foreignKey: 'user_id', as: 'user_loyalty_role'})
 
-UserLoyaltyRole.hasMany(LoyaltyRoles, {foreignKey: 'user_loyalty_role_id', as: 'loyalty_roles'})
-LoyaltyRoles.belongsTo(UserLoyaltyRole, {foreignKey: 'user_loyalty_role_id', as: 'loyalty_roles'})
+LoyaltyRoles.hasMany(UserLoyaltyRole, {foreignKey: 'user_loyalty_role_id', as: 'loyalty_roles'})
+UserLoyaltyRole.belongsTo(LoyaltyRoles, {foreignKey: 'user_loyalty_role_id', as: 'loyalty_roles'})
 
 Category.belongsToMany(Product, {foreignKey: 'category_id', through: ProductCategory, as: 'product_category'})
 Product.belongsToMany(Category, {foreignKey: 'product_id', through: ProductCategory, as: 'product_category'})
@@ -72,8 +72,8 @@ Coupon.belongsTo(User, {foreignKey: 'user_id', as: "users_coupons"})
 Category.hasMany(Coupon, {foreignKey: 'category_id', as: 'coupon_category'})
 Coupon.belongsTo(Category, {foreignKey: 'category_id', as: 'coupon_category'})
 
-CartProduct.hasMany(Invoice, {foreignKey: 'cart_product_id', as: 'invoice_products'})
-Invoice.belongsTo(CartProduct, {foreignKey: 'cart_product_id', as: 'invoice_products'})
+Invoice.hasMany(CartProduct, {foreignKey: 'invoice_product_id', as: 'invoice_products'})
+CartProduct.belongsTo(Invoice, {foreignKey: 'invoice_product_id', as: 'invoice_products'})
 
 User.hasMany(Invoice, {foreignKey: 'user_id', as: 'user_invoices'})
 Invoice.belongsTo(User, {foreignKey: 'user_id', as: 'user_invoices'})

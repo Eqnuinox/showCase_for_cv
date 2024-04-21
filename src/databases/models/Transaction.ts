@@ -8,7 +8,7 @@ export interface InvoiceInterface {
     discount?: string | null;
     final_price?: string;
     success: boolean;
-    cart_product_id?: number;
+    // cart_product_id?: number;
     coupon_id?: number | null;
     user_id?: number;
 
@@ -20,7 +20,7 @@ class Invoice extends Model<InferAttributes<Invoice>, InferCreationAttributes<In
     public discount?: string | null;
     public final_price?: string;
     public success!: boolean;
-    public cart_product_id?: number;
+    // public cart_product_id?: number;
     public user_id?: number;
     public coupon_id?: number | null;
 }

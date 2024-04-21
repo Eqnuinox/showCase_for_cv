@@ -1,10 +1,8 @@
 import {Transaction} from "sequelize";
 import sequelizeConnection from "../databases/sequelizeConnection";
-import {Cart, CartProduct, Invoice, User} from "../databases/models";
-import transaction from "../databases/models/Transaction";
+import {Cart, CartProduct, Invoice, Product, User} from "../databases/models";
 import {CouponRepository, ProductRepository, UserRepository} from "repositories";
 import {ErrorService} from "../services";
-import cart from "../databases/models/Cart";
 
 
 class InvoiceRepository {
@@ -29,7 +27,7 @@ class InvoiceRepository {
 
     private _transaction: Transaction | undefined;
 
-    async createInvoice(user_id:number) {
+    async createInvoice(user_id: number) {
         try {
             this._transaction = await sequelizeConnection.transaction();
 
@@ -39,7 +37,7 @@ class InvoiceRepository {
                 throw new ErrorService(404, 'User not found');
             }
             let cart = await Cart.findOne({where: {user_id}});
-            let cart_product = await CartProduct.findOne({where: {cart_id: cart?.id}});
+
             // Fetch products in cart
             const products = await this.ProductRepository.getAllProductsInCartByUserId(user_id);
             if (!products || !products.length) {
@@ -56,9 +54,14 @@ class InvoiceRepository {
                 user_id: user.id,
                 price: String(totalPrice),
                 success: false,
-                cart_product_id: cart_product?.id,
                 final_price: String(totalPrice)
             }, {transaction: this._transaction});
+
+            // Add invoice-id to cartProduct model
+            await CartProduct.update({invoice_product_id: invoice.id}, {
+                where: {cart_id: cart?.id},
+                transaction: this._transaction
+            })
 
             // Fetch coupons
             const coupons = await this.CouponRepository.getAllCoupons(user_id);
@@ -80,7 +83,18 @@ class InvoiceRepository {
 
             await invoice.reload();
 
-            return {invoice, products};
+            // find invoice after invoice-id were added to cartProduct
+            return await Invoice.findOne({
+                where: {id: invoice.id},
+                include: {
+                    model: CartProduct,
+                    as: 'invoice_products',
+                    include: [{
+                        model: Product,
+                        as: 'products_cart'
+                    }]
+                },
+            })
 
         } catch (error) {
             if (this._transaction) {
@@ -115,14 +129,14 @@ class InvoiceRepository {
                 coupon_id: current_coupon ? current_coupon.id : null,
                 discount,
                 final_price: finalPrice
-            }, { transaction: this._transaction });
+            }, {transaction: this._transaction});
 
 
             if (current_coupon?.is_applied && data?.success) {
                 await this.CouponRepository.update(current_coupon.id, {is_used: true});
             }
 
-            if (data?.success){
+            if (data?.success) {
                 await CartProduct.destroy({where: {cart_id: cart?.id}, transaction: this._transaction})
             }
 
@@ -140,7 +154,16 @@ class InvoiceRepository {
 
     async getInvoiceById(id: number) {
         try {
-            let invoice = await Invoice.findByPk(id);
+            let invoice = await Invoice.findByPk(id, {
+                include: {
+                    model: CartProduct,
+                    as: 'invoice_products',
+                    include: [{
+                        model: Product,
+                        as: 'products_cart'
+                    }]
+                }
+            });
             if (!invoice) {
                 throw new ErrorService(404, 'Invoice not found');
             }
@@ -155,6 +178,11 @@ class InvoiceRepository {
             let options: any = {
                 include: [
                     {
+                        model: CartProduct,
+                        as: 'invoice_products',
+                        include: [{model: Product, as: 'products_cart'}]
+                    },
+                    {
                         model: User,
                         as: 'user_invoices',
                         attributes: ['id', 'email']
@@ -163,7 +191,7 @@ class InvoiceRepository {
             };
 
             if (id) {
-                options.include[0].where = {id};
+                options.include[1].where = {id};
             }
             return await Invoice.findAll(options);
         } catch (error) {
