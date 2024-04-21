@@ -4,6 +4,7 @@ import {Cart, CartProduct, Invoice, User} from "../databases/models";
 import transaction from "../databases/models/Transaction";
 import {CouponRepository, ProductRepository, UserRepository} from "repositories";
 import {ErrorService} from "../services";
+import cart from "../databases/models/Cart";
 
 
 class InvoiceRepository {
@@ -95,6 +96,7 @@ class InvoiceRepository {
             let invoice = await this.getInvoiceById(id);
             let coupons = await this.CouponRepository.getAllCoupons(user_id);
             const products = await this.ProductRepository.getAllProductsInCartByUserId(user_id);
+            let cart = await Cart.findOne({where: {user_id}});
             if (!products || !products.length) {
                 throw new ErrorService(404, 'Products in cart not found');
             }
@@ -118,6 +120,10 @@ class InvoiceRepository {
 
             if (current_coupon?.is_applied && data?.success) {
                 await this.CouponRepository.update(current_coupon.id, {is_used: true});
+            }
+
+            if (data?.success){
+                await CartProduct.destroy({where: {cart_id: cart?.id}})
             }
 
             await invoice.update(data, {transaction: this._transaction});

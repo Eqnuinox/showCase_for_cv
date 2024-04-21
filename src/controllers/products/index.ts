@@ -54,7 +54,8 @@ export const updateProduct = async (req: Request, res: Response) => {
 
 export const addToCart = async (req: Request, res: Response) => {
     try {
-        let {id, user_id} = req.body;
+        let {id} = req.body;
+        let user_id = req.body.user.id;
         let cartProduct = await new ProductService().addToCart(id, user_id);
         ResponseHelper.sendResponse(res, 'Inserted successfully', cartProduct)
     } catch (exception: any) {
