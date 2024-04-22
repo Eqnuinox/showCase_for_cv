@@ -124,10 +124,11 @@ class InvoiceRepository {
             if (!products || !products.length) {
                 throw new ErrorService(404, 'Products in cart not found');
             }
-            // @ts-ignore
-            const local_category_id = products.length > 0 ? products[0].products_cart.product_category[0].id : null;
 
-            const current_coupon = coupons.find(coupon => coupon.category_id === local_category_id && coupon.is_applied && new Date(coupon.expiration_date).getTime() >= new Date().getTime());
+            // @ts-ignore
+            let products_id = products.map((el) => el.products_cart.product_category[0].id);
+
+            const current_coupon = coupons.find(coupon => products_id.includes(coupon.category_id) && coupon.is_applied && new Date(coupon.expiration_date).getTime() >= new Date().getTime());
             // @ts-ignore
             const totalPrice = products.reduce((acc, item) => acc + parseFloat(item.products_cart.current_price), 0);
 
