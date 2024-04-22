@@ -1,11 +1,13 @@
 import {
+    addProductToFavorite,
     addToCart,
     createProduct,
     deleteProduct,
-    getAllOrFiltersProducts,
+    getAllOrFiltersProducts, getAllProductsFromFavoriteList,
     getAllProductsInCart,
     getProductById,
     removeFromCart,
+    removeProductFromFavoriteList,
     updateProduct
 } from "../../../controllers/products";
 import {checkAccessUsersMiddleware} from "../../../middlewares/auth/checkAccessUsers.middleware";
@@ -22,6 +24,9 @@ productRouter.patch('/products/update', checkAccessUsersMiddleware, checkAdminSt
 productRouter.post('/products/add-to-cart', checkAccessUsersMiddleware, addToCart)
 productRouter.delete('/products/:id/remove-from-cart', checkAccessUsersMiddleware, removeFromCart)
 productRouter.get('/products/in-cart/:id', checkAccessUsersMiddleware, getAllProductsInCart)
+productRouter.post('/products/in-favorite-list/:id', checkAccessUsersMiddleware, addProductToFavorite)
+productRouter.delete('/products/:id/remove-favorite-list', checkAccessUsersMiddleware, removeProductFromFavoriteList)
+productRouter.get('/products/favorite/all', checkAccessUsersMiddleware, getAllProductsFromFavoriteList)
 
 
 export {productRouter} ;

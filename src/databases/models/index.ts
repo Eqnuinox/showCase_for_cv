@@ -51,8 +51,8 @@ VerificationCode.belongsTo(User, {foreignKey: 'user_id',})
 User.belongsToMany(Status, {through: UserRole, foreignKey: 'user_id', as: 'statuses'})
 Status.belongsToMany(User, {through: UserRole, foreignKey: 'status_id', as: 'users'})
 
-User.hasOne(FavoriteList, {foreignKey: 'user_id'})
-FavoriteList.belongsTo(User, {foreignKey: 'user_id'})
+User.hasOne(FavoriteList, {foreignKey: 'user_id', as: 'favorite_user'})
+FavoriteList.belongsTo(User, {foreignKey: 'user_id', as: 'favorite_user'})
 
 Product.hasMany(FavoriteList, {foreignKey: 'product_id', as: 'favorite_products'})
 FavoriteList.belongsTo(Product, {foreignKey: 'product_id', as: 'favorite_products'})

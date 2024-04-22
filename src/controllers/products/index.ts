@@ -82,3 +82,35 @@ export const getAllProductsInCart = async (req: Request, res: Response) => {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
     }
 }
+
+export const addProductToFavorite = async (req: Request, res: Response) => {
+    try {
+        let product_id = req.params.id
+        let user_id = req.body.user.id;
+        await new ProductService().addProductToFavorite(user_id, Number(product_id))
+        ResponseHelper.sendResponse(res, 'Inserted successfully')
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}
+
+export const removeProductFromFavoriteList = async (req: Request, res: Response) => {
+    try {
+        let product_id = req.params.id
+        let user_id = req.body.user.id;
+        await new ProductService().removeProductFromFavoriteList(user_id, Number(product_id))
+        ResponseHelper.sendResponse(res, 'Inserted successfully')
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}
+
+export const getAllProductsFromFavoriteList = async (req: Request, res: Response) => {
+    try {
+        let user_id = req.query.id;
+        let favorites_products = await new ProductService().getAllProductsFromFavoriteList(Number(user_id))
+        ResponseHelper.sendResponse(res, 'Inserted successfully', favorites_products)
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}

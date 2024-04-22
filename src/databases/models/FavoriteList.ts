@@ -3,11 +3,15 @@ import sequelizeConnection from "../sequelizeConnection";
 
 
 export interface FavoriteListInterface {
-    id: number;
+    id?: number;
+    user_id?: number;
+    product_id?: number
 }
 
 class FavoriteList extends Model<InferAttributes<FavoriteList>, InferCreationAttributes<FavoriteList>> implements FavoriteListInterface {
-    public id!: number;
+    public id?: number;
+    public user_id?: number;
+    public product_id?: number
 }
 
 FavoriteList.init({

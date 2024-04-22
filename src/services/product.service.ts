@@ -1,10 +1,13 @@
 import {ProductRepository} from "repositories/product.repository";
+import {FavoriteListRepository} from "../repositories";
 
 class ProductService {
     protected ProductRepository: ProductRepository;
+    private FavoriteListRepository: FavoriteListRepository;
 
     constructor() {
         this.ProductRepository = new ProductRepository();
+        this.FavoriteListRepository = new FavoriteListRepository();
     }
 
     public async getAllProducts() {
@@ -66,6 +69,28 @@ class ProductService {
     public async getAllProductsInCart(cart_id: number) {
         try {
             return await this.ProductRepository.getAllProductsInCart(cart_id)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    public async addProductToFavorite(user_id: number, product_id: number) {
+        try {
+            return await this.FavoriteListRepository.addProductToFavoriteList(user_id, product_id)
+        } catch (error) {
+            throw error
+        }
+    }
+    public async removeProductFromFavoriteList(user_id: number, product_id: number) {
+        try {
+            return await this.FavoriteListRepository.removeProductFromFavoriteList(user_id, product_id)
+        } catch (error) {
+            throw error
+        }
+
+    } public async getAllProductsFromFavoriteList(user_id?: number) {
+        try {
+            return await this.FavoriteListRepository.getAllProductsFromFavoriteList(user_id)
         } catch (error) {
             throw error
         }
