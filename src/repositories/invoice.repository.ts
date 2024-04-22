@@ -3,6 +3,7 @@ import sequelizeConnection from "../databases/sequelizeConnection";
 import {Cart, CartProduct, Invoice, Product, User} from "../databases/models";
 import {CouponRepository, ProductRepository, UserRepository} from "repositories";
 import {ErrorService, RedisService} from "../services";
+import {logger} from "sequelize/types/utils/logger";
 
 
 class InvoiceRepository {
@@ -69,10 +70,10 @@ class InvoiceRepository {
             // Fetch coupons
             const coupons = await this.CouponRepository.getAllCoupons(user_id);
             // @ts-ignore
-            const local_category_id = products.length > 0 ? products[0].products_cart.product_category[0].id : null;
+            let products_id = products.map((el) => el.products_cart.product_category[0].id);
 
             // Find applicable coupon
-            const current_coupon = coupons.find(coupon => coupon.category_id === local_category_id && coupon.is_applied && new Date(coupon.expiration_date).getTime() >= new Date().getTime());
+            const current_coupon = coupons.find(coupon => products_id.includes(coupon.category_id) && coupon.is_applied && new Date(coupon.expiration_date).getTime() >= new Date().getTime());
 
             // Apply coupon if applicable
             if (current_coupon) {
@@ -127,7 +128,6 @@ class InvoiceRepository {
             const local_category_id = products.length > 0 ? products[0].products_cart.product_category[0].id : null;
 
             const current_coupon = coupons.find(coupon => coupon.category_id === local_category_id && coupon.is_applied && new Date(coupon.expiration_date).getTime() >= new Date().getTime());
-
             // @ts-ignore
             const totalPrice = products.reduce((acc, item) => acc + parseFloat(item.products_cart.current_price), 0);
 
@@ -150,8 +150,10 @@ class InvoiceRepository {
             if (data?.success){
                 for (const product of products) {
                     // @ts-ignore
+                    const sameProductsCount = products.filter(p => p.products_cart.id === product.products_cart.id).length;
+                    // @ts-ignore
                     let current_product = product.products_cart;
-                    await Product.update({orders_count: current_product.orders_count + 1}, {
+                    await Product.update({orders_count: current_product.orders_count + sameProductsCount}, {
                         where: {
                             id: current_product.id
                         }, transaction: this.transaction
