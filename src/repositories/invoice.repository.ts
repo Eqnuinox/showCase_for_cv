@@ -147,14 +147,16 @@ class InvoiceRepository {
 
 
             await invoice.update(data, {transaction: this._transaction});
-            for (const product of products) {
-                // @ts-ignore
-                let current_product = product.products_cart;
-                await Product.update({orders_count: current_product.orders_count + 1}, {
-                    where: {
-                        id: current_product.id
-                    }, transaction: this.transaction
-                })
+            if (data?.success){
+                for (const product of products) {
+                    // @ts-ignore
+                    let current_product = product.products_cart;
+                    await Product.update({orders_count: current_product.orders_count + 1}, {
+                        where: {
+                            id: current_product.id
+                        }, transaction: this.transaction
+                    })
+                }
             }
             await this._transaction.commit();
             await invoice.reload();
