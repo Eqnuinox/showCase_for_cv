@@ -1,5 +1,5 @@
 import {UserOutput} from "databases/models/User";
-import {Status, User} from "databases/models";
+import {LoyaltyRoles, Status, User, UserLoyaltyRole} from "databases/models";
 import sequelizeConnection from "databases/sequelizeConnection";
 import {Includeable, Transaction} from "sequelize";
 import {generateRandomString} from "../utils/generate.account.number";
@@ -25,7 +25,12 @@ class UserRepository {
             as: 'statuses',
             attributes: ['id', 'status'],
             through: {attributes: []}
-        },
+        }, {
+            model: UserLoyaltyRole,
+            as: 'user_loyalty_role',
+            attributes: ['id'],
+            include: [{model: LoyaltyRoles, as: 'loyalty_roles'}]
+        }
     ];
 
     public async create(): Promise<UserOutput> {
@@ -37,9 +42,11 @@ class UserRepository {
                 device_number: device_number,
             }, {include: this.commonInclude, transaction: this._transaction});
             const statuses = await Status.findAll({where: {status: ['Guest']}});
-            //@ts-ignore
+
+            await UserLoyaltyRole.create({user_id: user.id, user_loyalty_role_id: 1}, {transaction: this._transaction})
             await Cart.create({id: user.id, user_id: user.id}, {transaction: this._transaction});
             await user.addStatuses(statuses, {transaction: this._transaction});
+
             await this._transaction.commit();
             await user.reload();
             return user;
@@ -91,6 +98,29 @@ class UserRepository {
         } catch (error) {
             if (this._transaction) {
                 await this._transaction.rollback();
+            }
+            throw error;
+        }
+    }
+
+    public async updateUserLoyaltyRole(id: number, loyal_role_id: number) {
+        try {
+            this._transaction = await sequelizeConnection.transaction();
+            await this.getUserById(id);
+
+            const current_user_role = await UserLoyaltyRole.findOne({where: {user_id: id}});
+            await current_user_role?.update({
+                user_id: id,
+                user_loyalty_role_id: loyal_role_id
+            }, {transaction: this._transaction});
+
+            await current_user_role?.reload();
+            await this._transaction.commit();
+
+            return current_user_role;
+        } catch (error) {
+            if (this._transaction) {
+                await this._transaction.rollback()
             }
             throw error;
         }

@@ -1,9 +1,8 @@
 import {Transaction} from "sequelize";
 import sequelizeConnection from "../databases/sequelizeConnection";
-import {Cart, CartProduct, Invoice, Product, User} from "../databases/models";
+import {Cart, CartProduct, Invoice, Product} from "../databases/models";
 import {CouponRepository, ProductRepository, UserRepository} from "repositories";
 import {ErrorService, RedisService} from "../services";
-import {logger} from "sequelize/types/utils/logger";
 
 
 class InvoiceRepository {
@@ -52,13 +51,15 @@ class InvoiceRepository {
             // @ts-ignore
             const totalPrice = products.reduce((acc, item) => acc + parseFloat(item.products_cart.current_price), 0);
 
+            //@ts-ignore
+            const loyalPrice = totalPrice * Number(user.user_loyalty_role.loyalty_roles.loyal_ratio);
 
             // Create invoice
             const invoice = await Invoice.create({
                 user_id: user.id,
                 price: String(totalPrice),
                 success: false,
-                final_price: String(totalPrice)
+                final_price: String(loyalPrice)
             }, {transaction: this._transaction});
 
             // Add invoice-id to cartProduct model
@@ -80,7 +81,7 @@ class InvoiceRepository {
                 await invoice.update({
                     coupon_id: current_coupon.id,
                     discount: String(current_coupon.discount_price),
-                    final_price: String(totalPrice - Number(current_coupon.discount_price))
+                    final_price: String(loyalPrice - Number(current_coupon.discount_price))
                 }, {transaction: this._transaction});
             }
             await this._transaction.commit();
@@ -117,6 +118,7 @@ class InvoiceRepository {
     async updateInvoice(id: number, data: any, user_id: number) {
         try {
             this._transaction = await sequelizeConnection.transaction();
+            let user = await this.UserRepository.getUserById(user_id);
             let invoice = await this.getInvoiceById(id);
             let coupons = await this.CouponRepository.getAllCoupons(user_id);
             const products = await this.ProductRepository.getAllProductsInCartByUserId(user_id);
@@ -127,13 +129,14 @@ class InvoiceRepository {
 
             // @ts-ignore
             let products_id = products.map((el) => el.products_cart.product_category[0].id);
-
             const current_coupon = coupons.find(coupon => products_id.includes(coupon.category_id) && coupon.is_applied && new Date(coupon.expiration_date).getTime() >= new Date().getTime());
             // @ts-ignore
             const totalPrice = products.reduce((acc, item) => acc + parseFloat(item.products_cart.current_price), 0);
+            // @ts-ignore
+            const loyalPrice = totalPrice * Number(user.user_loyalty_role.loyalty_roles.loyal_ratio);
 
             let discount = current_coupon ? String(current_coupon.discount_price) : null;
-            let finalPrice = current_coupon ? String(totalPrice - Number(current_coupon.discount_price)) : String(totalPrice);
+            let finalPrice = current_coupon ? String(loyalPrice - Number(current_coupon.discount_price)) : String(loyalPrice);
 
             await invoice.update({
                 coupon_id: current_coupon ? current_coupon.id : null,
@@ -148,7 +151,7 @@ class InvoiceRepository {
 
 
             await invoice.update(data, {transaction: this._transaction});
-            if (data?.success){
+            if (data?.success) {
                 for (const product of products) {
                     // @ts-ignore
                     const sameProductsCount = products.filter(p => p.products_cart.id === product.products_cart.id).length;

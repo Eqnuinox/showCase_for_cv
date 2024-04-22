@@ -3,14 +3,18 @@ import {
     createUser,
     deleteUser,
     getAllUsers,
-    getUserById, login, refreshTokens, resendVerificationCode,
+    getUserById,
+    login,
+    refreshTokens,
+    resendVerificationCode,
     sendVerificationCode,
-    updateUser, updateUserStatus, verifyAccount
+    updateUser,
+    updateUserLoyaltyRole,
+    updateUserStatus,
+    verifyAccount
 } from "../../../controllers/users";
 import {checkAccessUsersMiddleware} from "../../../middlewares/auth/checkAccessUsers.middleware";
-import {
-    checkAdminStatusMiddleware,
-} from "../../../middlewares/auth/checkStatusUsers.middleware";
+import {checkAdminStatusMiddleware,} from "../../../middlewares/auth/checkStatusUsers.middleware";
 
 const express = require("express");
 const accountRouter = express.Router();
@@ -27,5 +31,6 @@ accountRouter.patch('/users/resend-verification-code', resendVerificationCode);
 accountRouter.post('/users/login', login);
 accountRouter.patch('/users/update-user-status', checkAccessUsersMiddleware, checkAdminStatusMiddleware, updateUserStatus);
 accountRouter.get('/users/token/refresh', refreshTokens)
+accountRouter.patch('/users/update-loyalty-role', checkAccessUsersMiddleware, checkAdminStatusMiddleware, updateUserLoyaltyRole)
 
 export {accountRouter} ;

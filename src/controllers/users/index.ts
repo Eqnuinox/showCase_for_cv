@@ -1,7 +1,6 @@
 import {ResponseHelper} from "../../helpers/response";
-import {UserService} from "../../services/user.service";
 import {Request, Response} from "express";
-import {ErrorService, TokenService, VerificationCodeService} from "../../services";
+import {ErrorService, TokenService, UserService, VerificationCodeService} from "../../services";
 
 export const createUser = async (req: Request, res: Response) => {
     try {
@@ -110,6 +109,16 @@ export const updateUserStatus = async (req: Request, res: Response) => {
     try {
         let user = await new UserService().updateUserStatus(id, statuses);
         ResponseHelper.sendResponse(res, 'Inserted successfully', user)
+    } catch (exception: any) {
+        ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
+    }
+}
+
+export const updateUserLoyaltyRole = async (req: Request, res: Response) => {
+    try {
+        let {id, loyal_role_id} = req.body;
+        let updatedUserLoyaltyRole = await new UserService().updateUserLoyaltyRole(id, loyal_role_id);
+        ResponseHelper.sendResponse(res, 'Inserted successfully', updatedUserLoyaltyRole)
     } catch (exception: any) {
         ResponseHelper.sendError(res, exception.message, exception.statusCode, exception)
     }

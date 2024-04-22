@@ -1,10 +1,8 @@
 import {UserRepository} from "../repositories";
 import {UserOutput} from "../databases/models/User";
-import {VerificationCodeService} from "./verification.code.service";
 import {VerificationCodeRepository} from "repositories/verification-code.repository";
 import {ErrorService} from "./error.service";
 import {EmailService} from "./email.service";
-import {sendVerificationCode} from "../controllers/users";
 import {TokenService} from "./token.service";
 
 class UserService {
@@ -26,7 +24,15 @@ class UserService {
 
     public async updateAccount(id: number, data: any): Promise<UserOutput> {
         try {
-            return await this.userRepository.update(id, data)
+            return await this.userRepository.update(id, data);
+        } catch (error) {
+            throw error
+        }
+    }
+
+    public async updateUserLoyaltyRole(id: number, loyal_role_id: number) {
+        try {
+            return await this.userRepository.updateUserLoyaltyRole(id, loyal_role_id);
         } catch (error) {
             throw error
         }

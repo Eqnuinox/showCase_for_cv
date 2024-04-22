@@ -3,11 +3,16 @@ import sequelizeConnection from "../sequelizeConnection";
 
 
 export interface UserLoyaltyRoleInterface {
-    id: number;
+    id?: number;
+    user_id?: number;
+    user_loyalty_role_id?: number;
+
 }
 
 class UserLoyaltyRole extends Model<InferAttributes<UserLoyaltyRole>, InferCreationAttributes<UserLoyaltyRole>> implements UserLoyaltyRoleInterface {
-    public id!: number;
+    public id?: number;
+    public user_id?: number;
+    public user_loyalty_role_id?: number;
 }
 
 UserLoyaltyRole.init({

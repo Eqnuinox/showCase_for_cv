@@ -52,6 +52,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     }
 }
 
+
 export const addToCart = async (req: Request, res: Response) => {
     try {
         let {id} = req.body;
