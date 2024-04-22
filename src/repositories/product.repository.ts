@@ -175,7 +175,7 @@ class ProductRepository {
                 include: [{
                     model: Product,
                     as: 'products_cart',
-                    attributes: ['id', 'title', 'description', 'current_price'],
+                    attributes: ['id', 'title', 'description', 'current_price', 'orders_count'],
                     include: [{
                         model: Category,
                         as: 'product_category',
