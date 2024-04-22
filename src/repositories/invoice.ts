@@ -187,27 +187,59 @@ class InvoiceRepository {
         }
     }
 
+
+    async getRedisInvoiceById(id: number) {
+        try {
+            let client = await this.RedisService.connectRedis();
+
+            let invoice = await client.json.get(`invoice:${id}`)
+
+            await this.RedisService.closeRedis();
+
+            return invoice
+
+        } catch (error) {
+            throw error
+        }
+    }
+
     async getAllInvoices(id: number) {
         try {
-            let options: any = {
-                include: [
-                    {
-                        model: CartProduct,
-                        as: 'invoice_products',
-                        include: [{model: Product, as: 'products_cart'}]
-                    },
-                    {
-                        model: User,
-                        as: 'user_invoices',
-                        attributes: ['id', 'email']
-                    }
-                ],
-            };
+            // let options: any = {
+            //     include: [
+            //         {
+            //             model: CartProduct,
+            //             as: 'invoice_products',
+            //             include: [{model: Product, as: 'products_cart'}]
+            //         },
+            //         {
+            //             model: User,
+            //             as: 'user_invoices',
+            //             attributes: ['id', 'email']
+            //         }
+            //     ],
+            // };
+            //
+            // if (id) {
+            //     options.include[1].where = {id};
+            // }
+            // return await Invoice.findAll(options);
+            let client = await this.RedisService.connectRedis();
+            let keys = await client.keys('invoice:*');
+            let invoices = [];
 
-            if (id) {
-                options.include[1].where = {id};
+            for (let key of keys) {
+                let transaction = await client.json.get(key);
+
+                if (id && transaction.user_id === id) {
+                    invoices.push(transaction);
+                } else if (!id) {
+                    invoices.push(transaction);
+                }
             }
-            return await Invoice.findAll(options);
+
+            await this.RedisService.closeRedis();
+            return invoices
         } catch (error) {
             throw error
         }

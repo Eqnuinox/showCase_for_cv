@@ -27,7 +27,7 @@ class InvoiceService {
 
     public async getInvoiceById(id: number){
         try {
-            return await this.InvoiceRepository.getInvoiceById(id);
+            return await this.InvoiceRepository.getRedisInvoiceById(id);
         } catch (error){
             throw error
         }
