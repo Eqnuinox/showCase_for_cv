@@ -62,6 +62,7 @@ UserLoyaltyRole.belongsTo(User, {foreignKey: 'user_id', as: 'user_loyalty_role'}
 
 LoyaltyRoles.hasMany(UserLoyaltyRole, {foreignKey: 'user_loyalty_role_id', as: 'loyalty_roles'})
 UserLoyaltyRole.belongsTo(LoyaltyRoles, {foreignKey: 'user_loyalty_role_id', as: 'loyalty_roles'})
+UserLoyaltyRole.belongsTo(LoyaltyRoles, {foreignKey: 'next_user_loyalty_role_id', as: 'next_loyalty_role'})
 
 Category.belongsToMany(Product, {foreignKey: 'category_id', through: ProductCategory, as: 'product_category'})
 Product.belongsToMany(Category, {foreignKey: 'product_id', through: ProductCategory, as: 'product_category'})

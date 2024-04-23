@@ -1,6 +1,6 @@
 import {Transaction} from "sequelize";
 import sequelizeConnection from "../databases/sequelizeConnection";
-import {Cart, CartProduct, Invoice, Product} from "../databases/models";
+import {Cart, CartProduct, Invoice, LoyaltyRoles, Product, UserLoyaltyRole} from "../databases/models";
 import {CouponRepository, ProductRepository, UserRepository} from "repositories";
 import {ErrorService, RedisService} from "../services";
 
@@ -121,8 +121,9 @@ class InvoiceRepository {
             let user = await this.UserRepository.getUserById(user_id);
             let invoice = await this.getInvoiceById(id);
             let coupons = await this.CouponRepository.getAllCoupons(user_id);
-            const products = await this.ProductRepository.getAllProductsInCartByUserId(user_id);
+            let products = await this.ProductRepository.getAllProductsInCartByUserId(user_id);
             let cart = await Cart.findOne({where: {user_id}});
+
             if (!products || !products.length) {
                 throw new ErrorService(404, 'Products in cart not found');
             }
@@ -138,6 +139,13 @@ class InvoiceRepository {
             let discount = current_coupon ? String(current_coupon.discount_price) : null;
             let finalPrice = current_coupon ? String(loyalPrice - Number(current_coupon.discount_price)) : String(loyalPrice);
 
+            //@ts-ignore
+            let {upgrade_condition} = user.user_loyalty_role.loyalty_roles
+            //@ts-ignore
+            let {current_upgrade_status} = user.user_loyalty_role
+            //@ts-ignore
+            let {next_loyalty_role} = user.user_loyalty_role.loyalty_roles
+
             await invoice.update({
                 coupon_id: current_coupon ? current_coupon.id : null,
                 discount,
@@ -151,6 +159,23 @@ class InvoiceRepository {
 
 
             await invoice.update(data, {transaction: this._transaction});
+
+            if (data?.success && ((current_upgrade_status === upgrade_condition - 1) || (current_upgrade_status === null))) {
+                let next_user_loyalty_role = await LoyaltyRoles.findByPk(next_loyalty_role)
+                await UserLoyaltyRole.update({
+                    user_loyalty_role_id: next_loyalty_role,
+                    next_user_loyalty_role_id: next_user_loyalty_role?.next_loyalty_role
+                }, {
+                    where: {user_id},
+                    transaction: this._transaction
+                })
+            }
+            if (data?.success) {
+                await UserLoyaltyRole.update({current_upgrade_status: ++current_upgrade_status}, {
+                    where: {user_id},
+                    transaction: this._transaction
+                })
+            }
             if (data?.success) {
                 for (const product of products) {
                     // @ts-ignore

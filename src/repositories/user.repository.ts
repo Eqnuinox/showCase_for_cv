@@ -28,8 +28,8 @@ class UserRepository {
         }, {
             model: UserLoyaltyRole,
             as: 'user_loyalty_role',
-            attributes: ['id'],
-            include: [{model: LoyaltyRoles, as: 'loyalty_roles'}]
+            attributes: ['id', 'current_upgrade_status'],
+            include: [{model: LoyaltyRoles, as: 'loyalty_roles'}, {model: LoyaltyRoles, as: 'next_loyalty_role'}]
         }
     ];
 
@@ -43,7 +43,11 @@ class UserRepository {
             }, {include: this.commonInclude, transaction: this._transaction});
             const statuses = await Status.findAll({where: {status: ['Guest']}});
 
-            await UserLoyaltyRole.create({user_id: user.id, user_loyalty_role_id: 1}, {transaction: this._transaction})
+            await UserLoyaltyRole.create({
+                user_id: user.id,
+                user_loyalty_role_id: 4,
+                next_user_loyalty_role_id: 1
+            }, {transaction: this._transaction})
             await Cart.create({id: user.id, user_id: user.id}, {transaction: this._transaction});
             await user.addStatuses(statuses, {transaction: this._transaction});
 
@@ -146,10 +150,9 @@ class UserRepository {
 
     public async getAllUsers() {
         try {
-            const allUsers = await User.findAll({
+            return await User.findAll({
                 include: this.commonInclude,
             });
-            return allUsers;
         } catch (error) {
             throw error
         }
